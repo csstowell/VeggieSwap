@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block title %}Profile{% endblock %}
+
+{% block body %}
+<div class="headline">
+    <h1>User Produce</h1>
+</div>
+<div class="tableWrapper">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Produce</th>
+                <th>Quantity</th>
+                <th>Condition</th>
+                <th>Options</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Your rows inside the table HERE: -->
+            {% for user_produce in user_produce %}
+            <tr>
+                <td>{{ user_produce.user.username }}</td>
+                <td>{{ user_produce.produce.name }}</td>
+                <td>{{ user_produce.quantity }}</td>
+                <td>{{ user_produce.condition }}</td>
+                <td>
+                    <button class="btn btn-outline btn-info">Exchange</button>
+                    <button class="btn btn-outline btn-success">Delete</button>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+
+{% endblock %}

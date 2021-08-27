@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block body %}
+
+<h2>{{ display_produce.name }}</h2>
+
+<div class="row">
+
+    <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">
+        <img src="{{ display_produce.image_url }}" class="img-responsive">
+    </div>
+
+    <div class="col-xs-8 col-sm-6 col-md-4 col-lg-3">
+        <div class="well">
+            <h3>Produce Nutrient</h3>
+            <p> {{ display_produce.nutrient }} </p>
+            <a class="btn btn-primary" href="/add_user_produce/{{ display_produce.id }}">
+                Add Produce
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="produce-details">
+
+    <h3>Produce details</h3>
+    <ul>
+        <li>Name: {{ display_produce.name }}</li>
+        <li>Store: {{ display_produce.store }}</li>
+        <li>Variety: {{ display_produce.variety }}</li>
+        <li>Handpick: {{ display_produce.handpick }}</li>
+    </ul>
+</div>
+
+{% endblock %}
