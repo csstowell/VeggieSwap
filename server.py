@@ -1,12 +1,11 @@
-from flask import (Flask, render_template, request, flash,
-                   session, redirect, jsonify, url_for)
+from flask import (Flask, render_template, request, flash, session, redirect, jsonify, url_for)
 
 from model import Produce, User, UserProduce, ExchangeProduce, db, connect_to_db
 import crud
 
 app = Flask(__name__)
 app.secret_key = "SECRET"
-
+# ---------------------------------------------------------
 
 # HOMEPAGE ROUTE
 @app.route('/')
@@ -32,7 +31,8 @@ def market_page():
 def user_page():
     """View all user produce"""
 
-    user_id = session['current_user']
+    user_id = session['current_user_id']
+    print("USER IS", user_id)
     user_produce = crud.get_user_produce(user_id)
 
     return render_template("user.html", user_produce=user_produce)
@@ -65,10 +65,9 @@ def add_user_produce(produce_id):
         user_produce = session['user_produce'] = {}
     return redirect("/user")
 
-
+# DELETE USERPRODUCE
 @app.route("/user/delete/<int:id>", methods=['GET', 'POST'])
 def delete_user_produce(id):
-
     if request.method == 'POST':
         user_produce_id = UserProduce.query.get(id)
         db.session.delete(user_produce_id)
@@ -76,6 +75,16 @@ def delete_user_produce(id):
         flash('Produce has been deleted!')
 
     return redirect('/user')
+
+#---------------------------------NEW BELOW--------------------------------#
+
+@app.route('/exchange')
+def exchange():
+    """Show exchange page"""
+
+    exchange_items = ExchangeProduce.query.all()
+
+    return render_template('exchange.html', exchange_items=exchange_items)
 
 
 #-------------------------END--------------------------------#
