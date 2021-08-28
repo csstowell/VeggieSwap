@@ -1,5 +1,5 @@
-from flask import (Flask, render_template, request,
-                   flash, session, redirect, jsonify)
+from flask import (Flask, render_template, request, flash,
+                   session, redirect, jsonify, url_for)
 
 from model import Produce, User, UserProduce, ExchangeProduce, db, connect_to_db
 import crud
@@ -28,7 +28,7 @@ def market_page():
 
 
 # USER PROFILE
-@app.route('/user')
+@app.route('/user', methods=['GET', 'POST'])
 def user_page():
     """View all user produce"""
 
@@ -47,8 +47,6 @@ def show_produce(produce_id):
     return render_template("display_details.html", display_produce=produce)
 
 
-
-
 # ADD TO USERPRODUCE
 @app.route('/add_user_produce/<produce_id>')
 def add_user_produce(produce_id):
@@ -57,19 +55,27 @@ def add_user_produce(produce_id):
     # temp
     quantity = 1
     condition = "Good"
-    crud.add_user_produce(produce_id,session['current_user_id'], quantity, condition)
-
+    crud.add_user_produce(
+        produce_id, session['current_user_id'], quantity, condition)
 
     if 'user_produce' in session:
         user_produce = session['user_produce']
         flash("Produce successfully added to basket.")
     else:
         user_produce = session['user_produce'] = {}
-
-    
     return redirect("/user")
 
 
+@app.route("/user/delete/<int:id>", methods=['GET', 'POST'])
+def delete_user_produce(id):
+
+    if request.method == 'POST':
+        user_produce_id = UserProduce.query.get(id)
+        db.session.delete(user_produce_id)
+        db.session.commit()
+        flash('Produce has been deleted!')
+
+    return redirect('/user')
 
 
 #-------------------------END--------------------------------#

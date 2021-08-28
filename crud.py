@@ -11,7 +11,13 @@ def get_produce_by_id(id):
     produce= Produce.query.filter_by(id=id).one()
 
     return produce
+# ---------------------------------------------------------
 
+
+def get_user_produce_by_id(id):
+    user_produce_id = db.session.query(UserProduce).filter_by(id=id).first()
+    
+    return user_produce_id
 
 # ADD USER PRODUCE
 def add_user_produce(produce_id, user_id, quantity, condition):
@@ -27,17 +33,47 @@ def add_user_produce(produce_id, user_id, quantity, condition):
 
 
 # GET USER PRODUCE BY ID
-def get_user_produce(user_id):
+def get_user_produce(user_produce):
     """Get user_produce by username"""
 
-    user_produce = UserProduce.query.filter_by()
+    user_produce = UserProduce.query.filter()
+    return user_produce
+
+
+
+#------------------------- WORKING CODE ------------------------------------------#
+def get_produce_by_name(name):
+    """Takes in string and finds match with Produce in db, if any"""
+
+    existing_produce = db.session.query(UserProduce).filter_by(user_id=user_id).first()
+
+    if existing_produce:
+        return flash("Already")
+    else:
+        return None
+
+        
+def get_user_produce_by_produce(produce_id):
+    user_produce = UserProduce.query.filter()
 
     return user_produce
-#------------------------- WORKING CODE ------------------------------------------#
-
 # SHOW USERPRODUCE FOR USER IN SESSION
 # def show_user_produce(user_id):
 #     user_produce = UserProduce.query.filter_by(user_id=produce_id)
 
+# DELETE PRODUCE
+def del_user_produce(produce_id):
+    user_produce = UserProduce.query.filter_by(produce_id==produce_id).first()
 
-# def del_user_produce():
+    db.session.delete(user_produce)
+    db.session.commit()
+
+    return user_produce
+
+
+def get_name_by_id(id):
+    """Takes in id and returns name of matching produce"""
+
+    user_produce = UserProduce.query.filter_by(id=id).first()
+
+    return user_produce.name

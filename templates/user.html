@@ -1,7 +1,6 @@
 {% extends 'base.html' %}
 
 {% block title %}Profile{% endblock %}
-
 {% block body %}
 <div class="headline">
     <h1>User Produce</h1>
@@ -26,14 +25,33 @@
                 <td>{{ user_produce.quantity }}</td>
                 <td>{{ user_produce.condition }}</td>
                 <td>
+                    <form action="{{ url_for('delete_user_produce', id=user_produce.id) }}" method="post">
+                        <input class="btn" id="delete_user_produce" value="{{ produce_id }}" name="delete_user_produce" />
+                        <input type="submit" value="Delete" />
+                    </form>
+
                     <button class="btn btn-outline btn-info">Exchange</button>
-                    <button class="btn btn-outline btn-success">Delete</button>
+
                 </td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
 </div>
-
-
 {% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
