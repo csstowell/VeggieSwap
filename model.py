@@ -99,8 +99,8 @@ class ExchangeProduce(db.Model):
     state = db.Column(db.String)
 
     user_exchange = db.relationship('UserProduce', backref="exchange_produce")
-
-
+    produce = db.relationship('Produce', secondary='join(UserProduce, Produce, UserProduce.produce_id == Produce.id)', uselist=False, viewonly=True, backref='exchange_produce', sync_backref=False)
+    
     def __repr__(self):
         """Show human-readable exchange_produce"""
         return f"<ExchangeProduce id={self.id} "\

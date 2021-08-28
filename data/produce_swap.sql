@@ -230,8 +230,12 @@ COPY public.produce (id, name, handpick, store, variety, nutrient, img_url) FROM
 
 COPY public.user_produce (id, user_id, produce_id, quantity, condition) FROM stdin;
 2	2	2	3	Average
-40	3	1	1	Good
-41	3	1	1	Good
+49	3	4	1	Good
+50	3	2	1	Good
+51	3	3	1	Good
+52	3	4	1	Good
+53	3	2	1	Good
+54	3	2	1	Good
 \.
 
 
@@ -265,7 +269,7 @@ SELECT pg_catalog.setval('public.produce_id_seq', 4, true);
 -- Name: user_produce_id_seq; Type: SEQUENCE SET; Schema: public; Owner: hackbright
 --
 
-SELECT pg_catalog.setval('public.user_produce_id_seq', 41, true);
+SELECT pg_catalog.setval('public.user_produce_id_seq', 54, true);
 
 
 --
