@@ -1,0 +1,19 @@
+
+
+
+
+
+{% block body %}
+<article>
+    <h1>Hi {{ session['current_user'] }}!</h1>
+    {% if session['address'] %}
+        You're address is: {{ session['address'] }}!
+        <ul>
+            {% for address in address %}
+                <li>{{ address }}</li>
+            {% endfor %}
+        </ul>
+    <h1>Welcome! Get started <a href="{{ url_for('market_page') }}">here.</a></h1>
+        {% endif %}
+</article>
+{% endblock %}

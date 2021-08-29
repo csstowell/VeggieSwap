@@ -7,16 +7,25 @@ app = Flask(__name__)
 app.secret_key = "SECRET"
 # ---------------------------------------------------------
 
-# HOMEPAGE ROUTE
+# HOMEPAGE 
 @app.route('/')
-@app.route('/home')
+@app.route('/home', methods=['GET','POST'])
 def home_page():
     """Show homepage"""
+    if request.method == 'POST':
+        # Save the form data to the session object
+        session['address'] = request.form['home_address']
+        return redirect(url_for('user_info'))
+    return render_template('home.html')
 
-    return render_template('base.html')
+# USER-INFO
+@app.route('/user/user_info', methods=['GET', 'POST'])
+def user_info():
+    """Show user's info"""
+    return render_template('user_info.html')
 
 
-# MARKET ROUTE
+# MARKET 
 @app.route('/market')
 def market_page():
     """View all produce listings from database"""
@@ -26,19 +35,18 @@ def market_page():
     return render_template('market.html', items=items)
 
 
-# USER PROFILE
+# USER 
 @app.route('/user', methods=['GET', 'POST'])
 def user_page():
     """View all user produce"""
 
     user_id = session['current_user_id']
-    print("USER IS", user_id)
     user_produce = crud.get_user_produce(user_id)
 
     return render_template("user.html", user_produce=user_produce)
 
 
-# PRODUCE BY ID
+# SHOW PRODUCE BY ID
 @app.route('/market/<produce_id>')
 def show_produce(produce_id):
     '''Return produce details & provide button to add produce.'''
@@ -76,7 +84,8 @@ def delete_user_produce(id):
 
     return redirect('/user')
 
-#---------------------------------NEW BELOW--------------------------------#
+
+#-----------------EXCHANGE--------->
 # DISPLAY EXCHANGE PAGE
 @app.route('/exchange')
 def exchange():
@@ -87,7 +96,7 @@ def exchange():
     return render_template('exchange.html', exchange_items=exchange_items)
 
 
-
+# ADD USER EXCHANGE PRODUCE
 @app.route('/user/exchange/<int:id>', methods = ['GET', 'POST'])
 def add_exchange_produce(id):
     """Adds vegetable from user's produce to the exchange"""
@@ -102,6 +111,11 @@ def add_exchange_produce(id):
             user_exchange = crud.add_exchange_produce(exchange_produce, amount, comment)
             flash('Produce has been added to the exchange!')
         return redirect('/user', user_exchange=exchange_items)
+
+
+
+#---------------------------------NEW BELOW--------------------------------#
+
 
 
 
