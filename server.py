@@ -7,8 +7,13 @@ app = Flask(__name__)
 app.secret_key = "SECRET"
 # ---------------------------------------------------------
 
-# HOMEPAGE 
+# INDEX
 @app.route('/')
+def index():
+    """Login/register page"""
+    return render_template('base.html')
+
+# HOMEPAGE 
 @app.route('/home', methods=['GET','POST'])
 def home_page():
     """Show homepage"""
@@ -19,7 +24,7 @@ def home_page():
     return render_template('home.html')
 
 # USER-INFO
-@app.route('/user/user_info', methods=['GET', 'POST'])
+@app.route('/home/user_info', methods=['GET', 'POST'])
 def user_info():
     """Show user's info"""
     return render_template('user_info.html')
@@ -59,19 +64,20 @@ def show_produce(produce_id):
 @app.route('/add_user_produce/<produce_id>')
 def add_user_produce(produce_id):
     '''add user produce to user_page'''
-
-    # temp
-    quantity = 1
-    condition = "Good"
-    crud.add_user_produce(
-        produce_id, session['current_user_id'], quantity, condition)
+    if request.method == 'POST':
+    # save session quantity
+        session['quantity'] = request.form['produce_quantity']
+        quantity = session['quantity']
+        session['condition'] = request.form['produce_condition']
+        condition =  session['condition']
+        crud.add_user_produce(produce_id, session['current_user_id'], quantity, condition)
 
     if 'user_produce' in session:
         user_produce = session['user_produce']
         flash("Produce successfully added to basket.")
     else:
         user_produce = session['user_produce'] = {}
-    return redirect("/user")
+    return redirect("/market/1")
 
 # DELETE USERPRODUCE
 @app.route("/user/delete/<int:id>", methods=['GET', 'POST'])

@@ -34,9 +34,6 @@ def add_user_produce(produce_id, user_id, quantity, condition):
 
 # ---------------------------------------------------------
 
-
-
-#------------------------- NEW WORKING CODE ------------------------------------------#
 # CREATE EXCHANGE PRODUCE
 def add_exchange_produce(userproduce_id, amount, comment, state=None, date=None):
     user_exchange = ExchangeProduce(
@@ -47,6 +44,10 @@ def add_exchange_produce(userproduce_id, amount, comment, state=None, date=None)
 
     return user_exchange
 
+
+
+
+#------------------------- NEW WORKING CODE ------------------------------------------#
 
 
 

@@ -1,19 +1,19 @@
 {% extends 'base.html' %}
 
-{% block title %}Exchange{% endblock %}
+{% block title %}User's Page{% endblock %}
 {% block body %}
-<div class="headline">
-    <h1>User Produce</h1>
-</div>
-<div class="tableWrapper">
-    <table class="table">
+
+    <h1>{{ session['current_user'] }}'s Garden:</h1>
+    <table class="table table-hover table-dark">
         <thead>
             <tr>
-                <th>ID</th>
-                <th>Produce</th>
-                <th>Quantity</th>
-                <th>Condition</th>
-                <th>Options</th>
+                <!-- Your Columns HERE -->
+                <th scope="col">ID</th>
+                <th scope="col">Produce</th>
+                <th scope="col">Quantity</th>
+                <th scope="col">Condition</th>
+                <th scope="col">Variety</th>
+                <th scope="col">Options</th>
             </tr>
         </thead>
         <tbody>
@@ -24,24 +24,34 @@
                 <td>{{ user_produce.produce.name }}</td>
                 <td>{{ user_produce.quantity }}</td>
                 <td>{{ user_produce.condition }}</td>
+                <td>{{ user_produce.produce.variety }}</td>
                 <td>
-                    <form action="{{ url_for('delete_user_produce', id=user_produce.id) }}" method="post">
-                        <input class="btn" id="delete_user_produce" value="{{ user_produce.id }}" name="delete_user_produce" />
-                        <input type="submit" value="Delete" />
-                    </form>
+            <!-- <form action="{{ url_for('add_exchange_produce', id=user_produce.id) }}" method="post">
+                <input class="btn" id="edit_produce"  name="edit_produce" />
+                <input type="submit" value="Edit" />
+            </form> -->
+            <form action="{{ url_for('add_exchange_produce', id=user_produce.id) }}" method="post">
+                <input class="btn" id="exchange_produce"  name="exchange_produce" />
+                <input type="submit" value="Exchange" />
+            </form>
+            <form action="{{ url_for('delete_user_produce', id=user_produce.id) }}" method="post">
+                <input class="btn" id="delete_user_produce" name="delete_user_produce" />
+                <input type="submit" value="Delete" />
+            </form>
 
-                    <form action="{{ url_for('add_exchange_produce', id=user_produce.id) }}" method="post">
-                        <input class="btn" id="exchange_produce" value="{{ user_produce.id }}" name="exchange_produce" />
-                        <input type="submit" value="Exchange" />
-                    </form>
 
                 </td>
             </tr>
             {% endfor %}
         </tbody>
-    </table>
+    </table>   
 </div>
 {% endblock %}
+
+
+
+
+
 
 
 
