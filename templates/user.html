@@ -30,7 +30,10 @@
                         <input type="submit" value="Delete" />
                     </form>
 
-                    <button class="btn btn-outline btn-info">Exchange</button>
+                    <form action="{{ url_for('add_exchange_produce', id=user_produce.id) }}" method="post">
+                        <input class="btn" id="exchange_produce" value="{{ user_produce.id }}" name="exchange_produce" />
+                        <input type="submit" value="Exchange" />
+                    </form>
 
                 </td>
             </tr>

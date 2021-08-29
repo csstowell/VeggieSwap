@@ -37,6 +37,20 @@ def add_user_produce(produce_id, user_id, quantity, condition):
 
 
 #------------------------- NEW WORKING CODE ------------------------------------------#
+# CREATE EXCHANGE PRODUCE
+def add_exchange_produce(userproduce_id, amount, comment, state=None, date=None):
+    user_exchange = ExchangeProduce(
+        userproduce_id=userproduce_id, amount=amount, comment=comment, date=date, state=state)
+    
+    db.session.add(user_exchange)
+    db.session.commit()
+
+    return user_exchange
+
+
+
+
+
 def get_user_produce_by_produce_id(produce_id):
     """Takes in string and finds match with Produce in db, if any"""
 

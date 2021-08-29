@@ -77,7 +77,7 @@ def delete_user_produce(id):
     return redirect('/user')
 
 #---------------------------------NEW BELOW--------------------------------#
-
+# DISPLAY EXCHANGE PAGE
 @app.route('/exchange')
 def exchange():
     """Show exchange page"""
@@ -85,6 +85,28 @@ def exchange():
     exchange_items = ExchangeProduce.query.all()
 
     return render_template('exchange.html', exchange_items=exchange_items)
+
+
+
+@app.route('/user/exchange/<int:id>', methods = ['GET', 'POST'])
+def add_exchange_produce(id):
+    """Adds vegetable from user's produce to the exchange"""
+    
+    if request.method == 'POST':
+        session["userproduce_id"] = request.form["exchange_produce"]
+        if "userproduce_id" in session:
+            exchange_produce = session["userproduce_id"]
+
+            amount = 2
+            comment = 'Email me!'
+            user_exchange = crud.add_exchange_produce(exchange_produce, amount, comment)
+            flash('Produce has been added to the exchange!')
+        return redirect('/user', user_exchange=exchange_items)
+
+
+
+
+
 
 
 #-------------------------END--------------------------------#
