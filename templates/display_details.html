@@ -12,15 +12,20 @@
 
     <div class="col-xs-8 col-sm-6 col-md-4 col-lg-3">
         <div class="well">
-            <h3>Produce Nutrient</h3>
-            <p> {{ display_produce.nutrient }} </p>
-            <a class="btn btn-primary" href="/add_user_produce/{{ display_produce.id }}">
-                Add Produce
-            </a>
-            <form method="post">
-                <label for="produce_quantity">Enter quantity:</label>
-                <input type="amount" id="address" name="produce_quantity" required />
-                <button type="submit">Submit</button
+            <form action="/add_user_produce/{{ display_produce.id }}" method="post">
+                <h3>Produce Nutrient</h3>
+                <p> {{ display_produce.nutrient }} </p>
+                <label for="condition">Select condition:</label>
+                <select id="condition" name="condition" required>
+                    <option value="Fresh">Fresh</option>
+                    <option value="Blemished">Blemished</option>
+                </select>
+                <label for="quantity">Enter Quantity:</label>
+                <input type="quantity" id="quantity" name="quantity" required />
+                <button type="submit" href="/add_user_produce/{{ display_produce.id }}">Add</button><br>
+                <br>
+
+
             </form>
         </div>
     </div>

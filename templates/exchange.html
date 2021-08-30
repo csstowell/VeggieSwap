@@ -11,8 +11,8 @@
         <thead>
             <tr>
                 <!-- Your Columns HERE -->
-                <th scope="col">ID</th>
-                <th scope="col">Name</th>
+                <th scope="col">User</th>
+                <th scope="col">Produce</th>
                 <th scope="col">Quantity</th>
                 <th scope="col">Comment</th>
                 <th scope="col">Date</th>
@@ -23,8 +23,8 @@
             <!-- Your rows inside the table HERE: -->
             {% for item in exchange_items %}
                 <tr>
-                    <td>{{ item.id }}</td>
-                    <td>{{ item.produce.name }}</td>
+                    <td>{{ item.user_produce.user.username}}</td>
+                    <td>{{ item.user_produce.produce.name }}</td>
                     <td>{{ item.amount }}</td>
                     <td>{{ item.comment }}</td>
                     <td>{{ item.date }}</td>

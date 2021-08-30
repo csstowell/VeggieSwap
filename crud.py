@@ -1,22 +1,67 @@
 """CRUD operations"""
-
 # IMPORT MODEL
 from model import (db, User, Produce, UserProduce, ExchangeProduce, connect_to_db)
 
-# PRODUCE BY ID (/MARKET)
+# CREATE USER
+def create_user(username, email, password, zipcode, address, city, phone=None):
+    """Create and return a new user"""
+
+    user = User(username=username, email=email,
+                password=password, zipcode=zipcode, address=address, city=city, phone=phone)
+
+    db.session.add(user)
+    db.session.commit()
+
+    return user
+
+# CHECK USERNAME EXISTS
+def lookup_user(username):
+    """Returns True if username exists in User table"""
+
+    user = User.query.filter_by(username=username).first()
+
+    return user
+
+# GET MATCHING PASSWORD
+def get_password(username):
+    """Takes in username and returns matching user's password"""
+
+    password = db.session.query(User.password).filter_by(
+        username=username).one()
+
+    return password[0]
+
+# CHECK EMAIL
+def lookup_email(email):
+    """Returns True if email exists in User table"""
+
+    email = User.query.filter_by(email=email).first()
+
+    return email
+
+# GET USERNAME BY EMAIL
+def get_email_by_username(username):
+    """Takes in username and returns email of matching user"""
+
+    user = User.query.filter_by(username=username).first()
+
+    return user.email
+
+# GET USER VEGGIES
+def get_user_veggies(username):
+    """Takes in a username and returns user's user_produce"""
+    user_produce = db.session.query(UserProduce).select_from(UserProduce).join(User).join(Produce).filter(User.username==username).all()
+
+    return user_produce
+
+
+# MARKET PRODUCE BY ID
 def get_produce_by_id(id):
     """Return a vegetable, given produce.id."""
 
     produce = Produce.query.filter_by(id=id).one()
 
     return produce
-
-# GET USER'S PRODUCE
-def get_user_produce(user_id):
-    print("USER ID = ", user_id)
-    user_produce = UserProduce.query.filter_by(user_id=user_id)
-
-    return user_produce
 
 
 # ADD USER PRODUCE (/add_user_produce)
@@ -25,24 +70,36 @@ def add_user_produce(produce_id, user_id, quantity, condition):
     
     user_produce = UserProduce(
         user_id=user_id, produce_id=produce_id, quantity=quantity, condition=condition)
-
+    
+    
     db.session.add(user_produce)
     db.session.commit()
 
     return user_produce
 
+# NOT WORKING YET
+def check_exisiting_produce(produce_id):
+    """Takes in string and finds match with Produce in db, if any"""
 
+    existing_produce = db.session.query(
+        UserProduce).filter_by(userproduce_id=userproduce_id).first()
+
+    if existing_produce:
+        
+        return flash("existing")
+    else:
+        return None
 # ---------------------------------------------------------
 
 # CREATE EXCHANGE PRODUCE
-def add_exchange_produce(userproduce_id, amount, comment, state=None, date=None):
-    user_exchange = ExchangeProduce(
-        userproduce_id=userproduce_id, amount=amount, comment=comment, date=date, state=state)
+def add_exchange_produce(userproduce_id, amount, comment, userconsumer_id=None, state=None, date=None):
+    exchange_items = ExchangeProduce(
+        userproduce_id=userproduce_id, userconsumer_id=userconsumer_id, amount=amount, comment=comment, date=date, state=state)
     
-    db.session.add(user_exchange)
+    db.session.add(exchange_items)
     db.session.commit()
 
-    return user_exchange
+    return exchange_items
 
 
 
@@ -52,11 +109,11 @@ def add_exchange_produce(userproduce_id, amount, comment, state=None, date=None)
 
 
 
-def get_user_produce_by_produce_id(produce_id):
+def get_user_produce_by_produce_id(userproduce_id):
     """Takes in string and finds match with Produce in db, if any"""
 
     existing_produce = db.session.query(
-        UserProduce).filter_by(produce_id=produce_id).first()
+        UserProduce).filter_by(userproduce_id=userproduce_id).first()
 
     if existing_produce:
         return flash("existing")

@@ -363,3 +363,30 @@ ALTER TABLE ONLY public.user_produce
 -- PostgreSQL database dump complete
 --
 
+
+
+-- INSERT INTO users (username, email, password, zipcode, address, city, phone)
+-- VALUES ('jeanette_j', 'jeanette06@hotmail.com', '2qI4Qhvh#', '94118' '800 10th Avenue', 'San Francisco', '5109873211'); 
+
+
+
+
+CREATE TABLE exchange_produce (
+id SERIAL PRIMARY KEY,
+userproduce_id INTEGER 
+REFERENCES user_produce
+, userconsumer_id INTEGER
+REFERENCES users,   
+amount INTEGER,
+comment VARCHAR(150),
+date DATE,
+state VARCHAR(30));
+CREATE TABLE
+
+
+INSERT INTO exchange_produce (userproduce_id, userconsumer_id, amount, comment, date, state)
+VALUES (2, 2, 8, 'email me for more information!', '2021-8-30', 'Active');
+
+
+INSERT INTO exchange_produce (userproduce_id, userconsumer_id, amount, comment, date, state)
+VALUES (58, 8, 8, 'Let's meet up!', '2021-8-28', 'Active');

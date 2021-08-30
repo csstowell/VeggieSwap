@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block title %}
+Login Page
+{% endblock %}
+
+{% block content %}
+
+<body class="text-center">
+    <div class="container">
+        <form action="/handle-login" method="POST" class="form-signin" style="color:white">
+
+            <img class="mb-4" src="https://image.flaticon.com/icons/png/128/2921/2921855.png" alt="">
+            <h1 class="h3 mb-3 font-weight-normal">
+                Please Login
+            </h1>
+            <br>
+            <form method="POST">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="username" class="form-control" id="username" name="username"
+                        placeholder="Enter username" />
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" class="form-control" id="password" name="password"
+                        placeholder="Enter password" />
+                </div>
+                <br>
+                <div class="checkbox mb-3">
+                    <h6>Do not have an account?</h6>
+                    <a class="btn btn-sm btn-secondary" href="{{ url_for('register_page') }}">Register</a>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Login</button>
+            </form>
+    </div>
+</body>
+{% endblock %}

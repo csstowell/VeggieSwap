@@ -1,22 +1,31 @@
-from flask import (Flask, render_template, request, flash, session, redirect, jsonify, url_for)
-
+from flask import (Flask, render_template, request, flash,
+                   session, redirect, jsonify, url_for)
 from model import Produce, User, UserProduce, ExchangeProduce, db, connect_to_db
 import crud
+
 
 app = Flask(__name__)
 app.secret_key = "SECRET"
 # ---------------------------------------------------------
 
 # INDEX
+
+
 @app.route('/')
 def index():
-    """Login/register page"""
-    return render_template('base.html')
+    """View index page"""
+    if 'current_user' not in session:
+        return redirect('/login')
+    else:
+        username = session['current_user']
+        return redirect(f'/user/{username}')
+    return render_template('home.html')
 
-# HOMEPAGE 
-@app.route('/home', methods=['GET','POST'])
+    
+# HOMEPAGE
+@app.route('/home', methods=['GET', 'POST'])
 def home_page():
-    """Show homepage"""
+
     if request.method == 'POST':
         # Save the form data to the session object
         session['address'] = request.form['home_address']
@@ -30,7 +39,7 @@ def user_info():
     return render_template('user_info.html')
 
 
-# MARKET 
+# MARKET
 @app.route('/market')
 def market_page():
     """View all produce listings from database"""
@@ -40,19 +49,31 @@ def market_page():
     return render_template('market.html', items=items)
 
 
-# USER 
+# USER
 @app.route('/user', methods=['GET', 'POST'])
 def user_page():
     """View all user produce"""
+    if 'current_user' in session: 
+        username= session['current_user']
+        user_produce = crud.get_user_veggies(username)
 
-    user_id = session['current_user_id']
-    user_produce = crud.get_user_produce(user_id)
-
+    else:
+        return redirect('/login')
     return render_template("user.html", user_produce=user_produce)
 
 
+
+
+    # if 'current_user_id' in session:
+    #     session['current_user_id'] = (UserProduce.user_id)
+    #     user_id = session['current_user_id']
+    #     print("USER ID IS: !!!!!!", user_id)
+    #     user_produce = crud.get_user_produce(user_id)
+    #     print("USER PRODUCE IS: !!!!!!!", user_produce)
+
+
 # SHOW PRODUCE BY ID
-@app.route('/market/<produce_id>')
+@app.route('/market/<produce_id>', methods=['POST', 'GET'])
 def show_produce(produce_id):
     '''Return produce details & provide button to add produce.'''
     produce = crud.get_produce_by_id(produce_id)
@@ -61,23 +82,28 @@ def show_produce(produce_id):
 
 
 # ADD TO USERPRODUCE
-@app.route('/add_user_produce/<produce_id>')
+@app.route('/add_user_produce/<int:produce_id>', methods=['POST', 'GET'])
 def add_user_produce(produce_id):
     '''add user produce to user_page'''
+            
     if request.method == 'POST':
-    # save session quantity
-        session['quantity'] = request.form['produce_quantity']
+        user_id = session['current_user_id']
+        session['quantity'] = request.form['quantity']
+        session['condition'] = request.form['condition']
         quantity = session['quantity']
-        session['condition'] = request.form['produce_condition']
-        condition =  session['condition']
-        crud.add_user_produce(produce_id, session['current_user_id'], quantity, condition)
+        condition = session['condition']
 
-    if 'user_produce' in session:
-        user_produce = session['user_produce']
-        flash("Produce successfully added to basket.")
-    else:
-        user_produce = session['user_produce'] = {}
-    return redirect("/market/1")
+        user_produce = crud.add_user_produce(produce_id, user_id, quantity, condition)
+        # print("user produce is :", user_produce)
+        # <UserProduce id=67user=kyle produce=Asparagus>
+        # print("user produce USER :", user_produce.user)
+        # user produce USER : <User id=8 email=kyle_marks@hotmail.com username=kyle>
+        # print("user produce USER :", user_produce.user_id)
+        # user produce USER : 8
+        flash('Produce has been added to your garden!')
+        return redirect('/user')
+    return render_template('user.html', user_produce=user_produce)
+
 
 # DELETE USERPRODUCE
 @app.route("/user/delete/<int:id>", methods=['GET', 'POST'])
@@ -91,7 +117,7 @@ def delete_user_produce(id):
     return redirect('/user')
 
 
-#-----------------EXCHANGE--------->
+# -----------------  EXCHANGE PRODUCE ------------------------->
 # DISPLAY EXCHANGE PAGE
 @app.route('/exchange')
 def exchange():
@@ -103,30 +129,110 @@ def exchange():
 
 
 # ADD USER EXCHANGE PRODUCE
-@app.route('/user/exchange/<int:id>', methods = ['GET', 'POST'])
+@app.route('/user/exchange/<int:id>', methods=['GET', 'POST'])
 def add_exchange_produce(id):
     """Adds vegetable from user's produce to the exchange"""
-    
+
     if request.method == 'POST':
-        session["userproduce_id"] = request.form["exchange_produce"]
-        if "userproduce_id" in session:
-            exchange_produce = session["userproduce_id"]
+        session['userproduce_id'] = (id)
+        userproduce_id = session['userproduce_id']
+        amount = 3
+        comment = 'Msg me for phone number'
+        exchange_items = crud.add_exchange_produce(userproduce_id, amount, comment)
+        flash('Produce has been added to the exchange!')
 
-            amount = 2
-            comment = 'Email me!'
-            user_exchange = crud.add_exchange_produce(exchange_produce, amount, comment)
-            flash('Produce has been added to the exchange!')
-        return redirect('/user', user_exchange=exchange_items)
+        # user_produce_id = UserProduce.query.get(id)
+        # # print('USERPRODUCE_ID IS: ', user_produce_id)
+        # # <UserProduce id=78user=bella produce=Kale>
+        # db.session.delete(user_produce_id)
+        # db.session.commit()
+        # flash('Produce has been removed from garden!')
+        
+        return redirect('/user')
 
 
+#---------------------------LOGIN/REGISTER HANDLERS------------------------------------------#
 
+# LOGIN
+@app.route('/login', methods=['GET', 'POST'])
+def login_page():
+    """View login page"""
+
+    return render_template('login.html')
+
+# REGISTER
+
+
+@app.route('/register', methods=['GET', 'POST'])
+def register_page():
+    """View sign up form"""
+
+    return render_template('register.html')
+
+
+# LOGIN HANDLER
+@app.route('/handle-login', methods=['POST'])
+def handle_login():
+    """Log user into site"""
+
+    username = request.form['username']
+    password = request.form['password']
+
+    user = crud.lookup_user(username)
+    if not user:
+        flash("No account with this username. Please sign up.")
+        return redirect('/register')
+
+    if password == crud.get_password(username):
+        session['current_user'] = username
+        session['current_user_id'] = user.id
+        return redirect("/home")
+    else:
+        flash("Wrong password. Please try again.")
+        return redirect('/login')
+
+
+# REGISTER HANDLER
+@app.route('/handle-register', methods=['GET', 'POST'])
+def handle_register():
+    if request.method == 'POST':
+        username = request.form.get('username')
+        email = request.form.get('email')
+        zipcode = request.form.get('zipcode')
+        address = request.form.get('address')
+        city = request.form.get('city')
+        password1 = request.form.get('password1')
+        password2 = request.form.get('password2')
+
+        user = User.query.filter_by(email=email).first()
+        if user:
+            flash('user already exists.', category='error')
+        elif len(email) < 4:
+            flash('email must be greater than 3 characters.', category='error')
+        elif password1 != password2:
+            flash('Passwords don\'t match.', category='error')
+        else:
+            user = crud.create_user(
+                username, email, password1, zipcode, address, city)
+            session['current_user'] = username
+            session['current_user_id'] = user.id
+
+            flash(f"Welcome to the Community, {username}")
+            return redirect(f'/user')
+
+# LOGOUT PAGE
+
+
+@app.route('/logout')
+def handle_logout():
+    """Logs player out"""
+
+    del session['current_user']
+    del session['current_user_id']
+
+    flash(f"You've successfully logged out.")
+    return redirect('/login')
 #---------------------------------NEW BELOW--------------------------------#
-
-
-
-
-
-
 
 
 #-------------------------END--------------------------------#

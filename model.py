@@ -76,12 +76,28 @@ class UserProduce(db.Model):
     user = db.relationship('User', backref="user_produce")
     produce = db.relationship('Produce', backref="user_produce")
     
-    exchange = db.relationship('ExchangeProduce', backref="user_produce")
+    userproduce_id = db.relationship('ExchangeProduce', backref="user_produce")
 
     def __repr__(self):
         """Show human-readable UserGame instance"""
         return f"<UserProduce id={self.id}"\
             f"user={self.user.username} produce={self.produce.name}>"
+
+
+    def as_dict(self):
+        """Return object as a dictionary"""
+
+        return {
+            'name': self.produce.name,
+            'img_url': self.produce.img_url,
+            'condition': self.condition,
+            'quantity': self.quantity,
+            'email': self.user.email,
+            'username': self.user.username,
+            'zipcode': self.user.zipcode,
+        }
+
+
 
 
 # EXCHANGE PRODUCE
@@ -92,19 +108,21 @@ class ExchangeProduce(db.Model):
 
     id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     userproduce_id = db.Column(db.Integer, db.ForeignKey('user_produce.id'))
-    consumer_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    userconsumer_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     amount = db.Column(db.Integer, nullable=False)
     comment = db.Column(db.String)
     date = db.Column(db.Date, nullable=True)
     state = db.Column(db.String)
 
-    user_exchange = db.relationship('UserProduce', backref="exchange_produce")
+    user_exchange_produce = db.relationship('UserProduce', backref="exchange_produce")
     produce = db.relationship('Produce', secondary='join(UserProduce, Produce, UserProduce.produce_id == Produce.id)', uselist=False, viewonly=True, backref='exchange_produce', sync_backref=False)
-    
+
     def __repr__(self):
         """Show human-readable exchange_produce"""
         return f"<ExchangeProduce id={self.id} "\
-            f"userProduce_id={self.userProduce_id.produce.name} consumer_id={self.consumer_id.users.username}>"
+            f"userproduce_id={self.userproduce_id.produce.name} userconsumer_id={self.userconsumer_id.users.username}>"
+            
+    
 
 
 #-------------------------END--------------------------------#
