@@ -27,21 +27,21 @@ SET default_table_access_method = heap;
 CREATE TABLE public.exchange_produce (
     id integer NOT NULL,
     userproduce_id integer,
-    consumer_id integer,
-    amount integer NOT NULL,
+    userconsumer_id integer,
+    amount integer,
     comment character varying(150),
     date date,
-    state character varying(100)
+    state character varying(30)
 );
 
 
 ALTER TABLE public.exchange_produce OWNER TO hackbright;
 
 --
--- Name: exchange_produce_exchange_id_seq; Type: SEQUENCE; Schema: public; Owner: hackbright
+-- Name: exchange_produce_id_seq; Type: SEQUENCE; Schema: public; Owner: hackbright
 --
 
-CREATE SEQUENCE public.exchange_produce_exchange_id_seq
+CREATE SEQUENCE public.exchange_produce_id_seq
     AS integer
     START WITH 1
     INCREMENT BY 1
@@ -50,13 +50,13 @@ CREATE SEQUENCE public.exchange_produce_exchange_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.exchange_produce_exchange_id_seq OWNER TO hackbright;
+ALTER TABLE public.exchange_produce_id_seq OWNER TO hackbright;
 
 --
--- Name: exchange_produce_exchange_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: hackbright
+-- Name: exchange_produce_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: hackbright
 --
 
-ALTER SEQUENCE public.exchange_produce_exchange_id_seq OWNED BY public.exchange_produce.id;
+ALTER SEQUENCE public.exchange_produce_id_seq OWNED BY public.exchange_produce.id;
 
 
 --
@@ -179,7 +179,7 @@ ALTER SEQUENCE public.users_id_seq OWNED BY public.users.id;
 -- Name: exchange_produce id; Type: DEFAULT; Schema: public; Owner: hackbright
 --
 
-ALTER TABLE ONLY public.exchange_produce ALTER COLUMN id SET DEFAULT nextval('public.exchange_produce_exchange_id_seq'::regclass);
+ALTER TABLE ONLY public.exchange_produce ALTER COLUMN id SET DEFAULT nextval('public.exchange_produce_id_seq'::regclass);
 
 
 --
@@ -207,8 +207,14 @@ ALTER TABLE ONLY public.users ALTER COLUMN id SET DEFAULT nextval('public.users_
 -- Data for Name: exchange_produce; Type: TABLE DATA; Schema: public; Owner: hackbright
 --
 
-COPY public.exchange_produce (id, userproduce_id, consumer_id, amount, comment, date, state) FROM stdin;
-1	2	1	5	Delicious veggies	2021-08-25	Active
+COPY public.exchange_produce (id, userproduce_id, userconsumer_id, amount, comment, date, state) FROM stdin;
+8	2	2	8	email me for more information!	2021-08-30	Active
+9	2	2	8	email me for more information!	2021-08-30	Active
+11	58	8	8	Available to meet!	2021-08-28	Active
+12	82	\N	3	Msg me for phone number	\N	\N
+13	82	\N	3	Msg me for phone number	\N	\N
+14	87	\N	3	Msg me for phone number	\N	\N
+15	84	\N	3	Msg me for phone number	\N	\N
 \.
 
 
@@ -230,12 +236,14 @@ COPY public.produce (id, name, handpick, store, variety, nutrient, img_url) FROM
 
 COPY public.user_produce (id, user_id, produce_id, quantity, condition) FROM stdin;
 2	2	2	3	Average
-49	3	4	1	Good
-50	3	2	1	Good
-51	3	3	1	Good
-52	3	4	1	Good
-53	3	2	1	Good
-54	3	2	1	Good
+58	8	1	9	Fresh
+81	9	4	2	Fresh
+82	9	3	7	Fresh
+84	9	1	8	Fresh
+85	9	2	5	Blemished
+86	9	2	5	Blemished
+87	9	1	3	Fresh
+55	3	4	1	Good
 \.
 
 
@@ -248,14 +256,19 @@ COPY public.users (id, username, email, password, zipcode, phone, address, city)
 2	wayne_j	wayne_johnson@gmail.com	concepts	67941	7139328567	\N	\N
 3	Katie	kate_cat@aim.com	pineapple	94114	\N	\N	\N
 4	mel	melverine@yahoo.com	pie	82289	\N	\N	\N
+5	kimbers_99	kimberlywolfe@aol.com	_9mZoU6f!I	94116	4158765476	1833 10th Avenue	San Francisco
+6	jeanette_j	jeanette06@hotmail.com	2qI4Qhvh#	94118	5109873211	800 10th Avenue	San Francisco
+7	katie	katiekintz@gmail.com	hello	94114	\N	555 Alvarado Street	San Francisco
+8	kyle	kyle_marks@hotmail.com	hello	94114	\N	556 Alvarado Street	San Francisco
+9	bella	bella.k@aol.com	hi	94704	\N	1649 MLK Way	Berkeley
 \.
 
 
 --
--- Name: exchange_produce_exchange_id_seq; Type: SEQUENCE SET; Schema: public; Owner: hackbright
+-- Name: exchange_produce_id_seq; Type: SEQUENCE SET; Schema: public; Owner: hackbright
 --
 
-SELECT pg_catalog.setval('public.exchange_produce_exchange_id_seq', 1, true);
+SELECT pg_catalog.setval('public.exchange_produce_id_seq', 15, true);
 
 
 --
@@ -269,14 +282,14 @@ SELECT pg_catalog.setval('public.produce_id_seq', 4, true);
 -- Name: user_produce_id_seq; Type: SEQUENCE SET; Schema: public; Owner: hackbright
 --
 
-SELECT pg_catalog.setval('public.user_produce_id_seq', 54, true);
+SELECT pg_catalog.setval('public.user_produce_id_seq', 87, true);
 
 
 --
 -- Name: users_id_seq; Type: SEQUENCE SET; Schema: public; Owner: hackbright
 --
 
-SELECT pg_catalog.setval('public.users_id_seq', 4, true);
+SELECT pg_catalog.setval('public.users_id_seq', 9, true);
 
 
 --
@@ -328,19 +341,19 @@ ALTER TABLE ONLY public.users
 
 
 --
--- Name: exchange_produce exchange_produce_buyer_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: hackbright
+-- Name: exchange_produce exchange_produce_userconsumer_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: hackbright
 --
 
 ALTER TABLE ONLY public.exchange_produce
-    ADD CONSTRAINT exchange_produce_buyer_id_fkey FOREIGN KEY (consumer_id) REFERENCES public.users(id);
+    ADD CONSTRAINT exchange_produce_userconsumer_id_fkey FOREIGN KEY (userconsumer_id) REFERENCES public.users(id);
 
 
 --
--- Name: exchange_produce exchange_produce_seller_produce_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: hackbright
+-- Name: exchange_produce exchange_produce_userproduce_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: hackbright
 --
 
 ALTER TABLE ONLY public.exchange_produce
-    ADD CONSTRAINT exchange_produce_seller_produce_id_fkey FOREIGN KEY (userproduce_id) REFERENCES public.user_produce(id);
+    ADD CONSTRAINT exchange_produce_userproduce_id_fkey FOREIGN KEY (userproduce_id) REFERENCES public.user_produce(id);
 
 
 --
@@ -363,30 +376,12 @@ ALTER TABLE ONLY public.user_produce
 -- PostgreSQL database dump complete
 --
 
+INSERT INTO users (username, email, password, zipcode, address, city, phone)
+produce_swap-# VALUES ('Karen.Brown', 'karenbrown@hotmail.com', '5@nE3Cy9Jg', 94114, '65 Douglass St', 'San Francisco', '(415) 558-8188');
+
+INSERT INTO users (username, email, password, zipcode, address, city, phone)
+produce_swap-# VALUES ('ikes_m','iking@molina-cummings.info', 'bikers8', 94114, '373 Liberty St', 'San Francisco', '(415) 641-5248');
 
 
--- INSERT INTO users (username, email, password, zipcode, address, city, phone)
--- VALUES ('jeanette_j', 'jeanette06@hotmail.com', '2qI4Qhvh#', '94118' '800 10th Avenue', 'San Francisco', '5109873211'); 
-
-
-
-
-CREATE TABLE exchange_produce (
-id SERIAL PRIMARY KEY,
-userproduce_id INTEGER 
-REFERENCES user_produce
-, userconsumer_id INTEGER
-REFERENCES users,   
-amount INTEGER,
-comment VARCHAR(150),
-date DATE,
-state VARCHAR(30));
-CREATE TABLE
-
-
-INSERT INTO exchange_produce (userproduce_id, userconsumer_id, amount, comment, date, state)
-VALUES (2, 2, 8, 'email me for more information!', '2021-8-30', 'Active');
-
-
-INSERT INTO exchange_produce (userproduce_id, userconsumer_id, amount, comment, date, state)
-VALUES (58, 8, 8, 'Let's meet up!', '2021-8-28', 'Active');
+produce_swap=# INSERT INTO users (username, email, password, zipcode, address, city, phone)
+VALUES ('jessie99', 'jessica07@conway.info', 'coffee.g', 94114, '44 Vicksburg St', 'San Francisco', '(415) 826-2553');

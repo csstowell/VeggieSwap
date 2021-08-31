@@ -1,7 +1,7 @@
-from flask import (Flask, render_template, request, flash,
-                   session, redirect, jsonify, url_for)
+from flask import (Flask, render_template, request, flash, session, redirect, jsonify, url_for)
 from model import Produce, User, UserProduce, ExchangeProduce, db, connect_to_db
 import crud
+import googlemaps
 
 
 app = Flask(__name__)
@@ -18,7 +18,7 @@ def index():
         return redirect('/login')
     else:
         username = session['current_user']
-        return redirect(f'/user/{username}')
+        return redirect(f'/user')
     return render_template('home.html')
 
     
@@ -161,8 +161,6 @@ def login_page():
     return render_template('login.html')
 
 # REGISTER
-
-
 @app.route('/register', methods=['GET', 'POST'])
 def register_page():
     """View sign up form"""
@@ -201,6 +199,7 @@ def handle_register():
         zipcode = request.form.get('zipcode')
         address = request.form.get('address')
         city = request.form.get('city')
+        state = request.form.get('state')
         password1 = request.form.get('password1')
         password2 = request.form.get('password2')
 
@@ -212,10 +211,25 @@ def handle_register():
         elif password1 != password2:
             flash('Passwords don\'t match.', category='error')
         else:
+            # # construct full address
+            full_address = address + "," + city + "," + state + "," + zipcode
+            
+            # call gmaps.geocode to get lat/lng
+            gmaps = googlemaps.Client(key='AIzaSyDIYpD84hN93_pAL4oomppVemp3JYSvaRE')
+
+            # Geocoding an address
+            geocode_result = gmaps.geocode(full_address)
+# print (geocode_result[0]["geometry"]["location"])
+            lat = geocode_result[0]["geometry"]["location"]["lat"]
+            lng = geocode_result[0]["geometry"]["location"]["lng"]
+
+            
             user = crud.create_user(
-                username, email, password1, zipcode, address, city)
+                username, email, password1, address, city, zipcode, lat, lng)
             session['current_user'] = username
             session['current_user_id'] = user.id
+            session['user_lat'] = lat
+            session['user_lng'] = lng
 
             flash(f"Welcome to the Community, {username}")
             return redirect(f'/user')

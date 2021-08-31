@@ -32,6 +32,9 @@ class User(db.Model):
     zipcode = db.Column(db.Integer, nullable=False)
     address = db.Column(db.String)
     city = db.Column(db.String)
+    state = db.Column(db.String)
+    lat = db.Column(db.Float)
+    lng = db.Column(db.Float)
     phone = db.Column(db.String, unique=True)
     
     def __repr__(self):

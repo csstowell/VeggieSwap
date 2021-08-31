@@ -3,11 +3,14 @@
 from model import (db, User, Produce, UserProduce, ExchangeProduce, connect_to_db)
 
 # CREATE USER
-def create_user(username, email, password, zipcode, address, city, phone=None):
+def create_user(username, email, password, address, city, zipcode, lat, lng, phone=None):
     """Create and return a new user"""
 
     user = User(username=username, email=email,
-                password=password, zipcode=zipcode, address=address, city=city, phone=phone)
+                password=password,
+                address=address, city=city, zipcode=zipcode, 
+                lat=lat, lng=lng,
+                phone=phone)
 
     db.session.add(user)
     db.session.commit()
@@ -71,7 +74,6 @@ def add_user_produce(produce_id, user_id, quantity, condition):
     user_produce = UserProduce(
         user_id=user_id, produce_id=produce_id, quantity=quantity, condition=condition)
     
-    
     db.session.add(user_produce)
     db.session.commit()
 
@@ -85,10 +87,11 @@ def check_exisiting_produce(produce_id):
         UserProduce).filter_by(userproduce_id=userproduce_id).first()
 
     if existing_produce:
-        
+        db.session.insert(existing_produce)
+        db.session.commit()
         return flash("existing")
     else:
-        return None
+        return user_produce
 # ---------------------------------------------------------
 
 # CREATE EXCHANGE PRODUCE
