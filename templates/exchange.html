@@ -7,32 +7,131 @@
 
 {% block body %}
     <h1>Exchange</h1>
-    <table class="table table-hover table-dark">
-        <thead>
-            <tr>
-                <!-- Your Columns HERE -->
-                <th scope="col">User</th>
-                <th scope="col">Produce</th>
-                <th scope="col">Quantity</th>
-                <th scope="col">Comment</th>
-                <th scope="col">Date</th>
-                <th scope="col">Options</th>
-            </tr>
-        </thead>
-        <tbody>
-            <!-- Your rows inside the table HERE: -->
+
+    <script>
+        
+          if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(showPosition);
+          } else { 
+            map.innerHTML = "Geolocation is not supported by this browser.";
+          }
+        
+        
+        function showPosition(position) {
+            map.innerHTML = "Latitude: " + position.coords.latitude + 
+          "<br>Longitude: " + position.coords.longitude;
+        }
+        
+        function initMap() {
+          // The location of SF
+          const sf = { lat: 37.753506, lng: -122.433315 }; 
+          // The map, centered at SF
+          const map = new google.maps.Map(document.getElementById("map"), {
+            zoom: 7,
+            center: sf,
+          });
+            let lat = 0;
+            let lng = 0;
             {% for item in exchange_items %}
-                <tr>
-                    <td>{{ item.user_produce.user.username}}</td>
-                    <td>{{ item.user_produce.produce.name }}</td>
-                    <td>{{ item.amount }}</td>
-                    <td>{{ item.comment }}</td>
-                    <td>{{ item.date }}</td>
-                    <td>
-                        <a class="btn btn-primary" href="/contact/{{ item.id }}">Contact</a>
-                    </td>
-                </tr>
+
+                console.log('{{item.user_produce.user}}')
+                lat = {{ item.user_produce.user.lat }};
+                lng = {{ item.user_produce.user.lng }};
+                if (lat != 'None') {
+                  const coord = {
+                    lat: lat,
+                    lng: lng
+                }
+                new google.maps.Marker({
+                    position: entry,
+                    label: '{{ item.user_produce.user.username}}',
+                    title: 'title',
+                    map: map});
+                }
+
             {% endfor %}
-        </tbody>
-    </table>
+/*
+          const gardens = [
+          { lat: 37.753506, lng: -122.433315 },
+          { lat: 37.759506, lng: -122.434315 },
+          { lat: 37.775506, lng: -122.455315 }, 
+          ];
+
+          gardens.forEach((entry)=>{
+            new google.maps.Marker({
+            position: entry,
+            label: 'garden#1',
+            title: 'title',
+            map: map});
+          })
+
+*/
+          // The marker, positioned at SF
+          const marker = new google.maps.Marker({
+            position: sf,
+            map: map,
+          });
+        
+          // Add circle overlay and bind to marker
+        var circle = new google.maps.Circle({
+          map: map,
+          radius: 1609,    // 1 miles in metres
+          fillColor: 'green',
+          fillOpacity: 0.15
+        });
+        circle.bindTo('center', marker, 'position');
+        }
+        
+        </script>
+        
+        <table>
+          <tr>
+            <td width="100%">
+              <div style="height: 100vh; width: 100%;">
+                <div id="map" style="height:100%; width: 100%;" ></div>
+              </div>
+            </td>
+            <td>
+              <table class="table table-hover table-dark">
+                <thead>
+                    <tr>
+                        <!-- Your Columns HERE -->
+                        <th scope="col">User</th>
+                        <th scope="col">Produce</th>
+                        <th scope="col">Quantity</th>
+                        <th scope="col">Comment</th>
+                        <th scope="col">Date</th>
+                        <th scope="col">Options</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Your rows inside the table HERE: -->
+                    {% for item in exchange_items %}
+                        <tr>
+                            <td>{{ item.user_produce.user.username}}</td>
+                            <td>{{ item.user_produce.produce.name }}</td>
+                            <td>{{ item.amount }}</td>
+                            <td>{{ item.comment }}</td>
+                            <td>{{ item.date }}</td>
+                            <td>
+                                <a class="btn btn-primary" href="/contact/{{ item.id }}">Contact</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            </td>
+          </tr>
+        </table>
+
+
+
+
+        <!-- Async script executes immediately and must be after any DOM elements used in callback. -->
+        <script
+          src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB41DRUbKWJHPxaFjMAwdrzWzbVKartNGg&callback=initMap&libraries=&v=weekly&channel=2"
+          async
+        ></script>
+
+
 {% endblock %}

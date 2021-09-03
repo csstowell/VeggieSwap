@@ -1,10 +1,29 @@
 {% extends 'base.html' %}
 {% block title %}
-  Marketplace
+Marketplace
 {% endblock %}
 
 {% block body %}
-    <h1>Marketplace</h1>
+<!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $("#myInput").on("keyup", function () {
+            var value = $(this).val().toLowerCase();
+            $("#myDIV *").filter(function () {
+                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+            });
+        });
+    });
+</script> -->
+
+<h1>Marketplace</h1>
+<section id="produce-search">
+    <form action="/" id="produce-search-form" class="form-inline justify-content-center">
+        <input type="text" id="produce-search-terms" class="col-3 mr-1" placeholder="Search for produce...">
+        <input type="submit" class="btn btn-primary btn-sm">
+    </form>
+</section>
+<section>
     <table class="table table-hover table-dark">
         <thead>
             <tr>
@@ -17,21 +36,28 @@
                 <th scope="col">Options</th>
             </tr>
         </thead>
-        <tbody>
+        <tbody id="produce-results">
+
             <!-- Your rows inside the table HERE: -->
             {% for item in items %}
-                <tr>
-                    <td>{{ item.id }}</td>
-                    <td>{{ item.name }}</td>
-                    <td>{{ item.nutrient }}</td>
-                    <td>{{ item.store }}</td>
-                    <td>{{ item.variety }}</td>
-                    <td>
-
-                        <a class="btn btn-primary" href="/market/{{ item.id }}">Details</a>
-                    </td>
-                </tr>
+            <tr>
+                <td>{{ item.id }}</td>
+                <td>{{ item.name }}</td>
+                <td>{{ item.nutrient }}</td>
+                <td>{{ item.store }}</td>
+                <td>{{ item.variety }}</td>
+                <td>
+                    <a class="btn btn-primary" href="/market/{{ item.id }}">Details</a>
+                </td>
+            </tr>
             {% endfor %}
         </tbody>
     </table>
-{% endblock %}
+    </div class="loader">
+    </body>
+
+    </html>
+
+
+
+    {% endblock %}

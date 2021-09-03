@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+
+<body>
+
+    <p>Click the button to get your coordinates.</p>
+
+    <p id="demo"></p>
+
+    <script>
+        var x = document.getElementById("demo");
+
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(showPosition);
+        } else {
+            x.innerHTML = "Geolocation is not supported by this browser.";
+        }
+
+
+        function showPosition(position) {
+            x.innerHTML = "Latitude: " + position.coords.latitude +
+                "<br>Longitude: " + position.coords.longitude;
+        }
+
+        function initMap() {
+            // The location of SF
+            const sf = { lat: 37.753506, lng: -122.433315 };
+            // The map, centered at SF
+            const map = new google.maps.Map(document.getElementById("map"), {
+                zoom: 15,
+                center: sf,
+            });
+
+            const gardens = [
+                { lat: 37.753506, lng: -122.433315 },
+                { lat: 37.759506, lng: -122.434315 },
+                { lat: 37.775506, lng: -122.455315 },
+            ];
+
+            gardens.forEach((entry) => {
+                new google.maps.Marker({
+                    position: entry,
+                    label: 'garden#1',
+                    title: 'title',
+                    map: map
+                });
+            })
+            // The marker, positioned at SF
+            const marker = new google.maps.Marker({
+                position: sf,
+                map: map,
+            });
+
+            // Add circle overlay and bind to marker
+            var circle = new google.maps.Circle({
+                map: map,
+                radius: 1609,    // 1 miles in metres
+                fillColor: 'green',
+                fillOpacity: 0.15
+            });
+            circle.bindTo('center', marker, 'position');
+        }
+    </script>
+
+    <div id="map" style="height: 600px; width: 100%;"></div>
+
+    <!-- Async script executes immediately and must be after any DOM elements used in callback. -->
+    <script
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB41DRUbKWJHPxaFjMAwdrzWzbVKartNGg&callback=initMap&libraries=&v=weekly&channel=2"
+        async></script>
+</body>
+
+</html>

@@ -2,6 +2,7 @@ from flask import (Flask, render_template, request, flash, session, redirect, js
 from model import Produce, User, UserProduce, ExchangeProduce, db, connect_to_db
 import crud
 import googlemaps
+import geocoder
 
 
 app = Flask(__name__)
@@ -92,14 +93,19 @@ def add_user_produce(produce_id):
         session['condition'] = request.form['condition']
         quantity = session['quantity']
         condition = session['condition']
-
-        user_produce = crud.add_user_produce(produce_id, user_id, quantity, condition)
-        # print("user produce is :", user_produce)
-        # <UserProduce id=67user=kyle produce=Asparagus>
-        # print("user produce USER :", user_produce.user)
-        # user produce USER : <User id=8 email=kyle_marks@hotmail.com username=kyle>
-        # print("user produce USER :", user_produce.user_id)
-        # user produce USER : 8
+        
+        if (crud.user_produce_exists(user_id, produce_id)):
+            # do an update 
+            crud.user_produce_update(produce_id, quantity)
+            flash('Produce has been updated to your garden!')
+        else:
+            user_produce = crud.add_user_produce(produce_id, user_id, quantity, condition)
+            # print("user produce is :", user_produce)
+            # <UserProduce id=67user=kyle produce=Asparagus>
+            # print("user produce USER :", user_produce.user)
+            # user produce USER : <User id=8 email=kyle_marks@hotmail.com username=kyle>
+            # print("user produce USER :", user_produce.user_id)
+            # user produce USER : 8
         flash('Produce has been added to your garden!')
         return redirect('/user')
     return render_template('user.html', user_produce=user_produce)
@@ -235,8 +241,6 @@ def handle_register():
             return redirect(f'/user')
 
 # LOGOUT PAGE
-
-
 @app.route('/logout')
 def handle_logout():
     """Logs player out"""

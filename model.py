@@ -38,7 +38,7 @@ class User(db.Model):
     phone = db.Column(db.String, unique=True)
     
     def __repr__(self):
-        return f"<User id={self.id } email={self.email} username={self.username}>"
+        return f"<User id={self.id } email={self.email} username={self.username} lat={self.lat} lng={self.lng}>"
 
 
 # PRODUCE

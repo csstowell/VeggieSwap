@@ -1,0 +1,24 @@
+<form method="post" action="" id="search_form">
+    <table class="table_form">
+        <tr>
+            <td><input id="id_name" type="text" maxlength="50"></td>
+            <td><input type="submit" value="Search"></td>
+        </tr>
+    </table>
+</form>
+
+$("#search_form input[type='submit']").click(function() {
+    input = $("#id_name").val();
+    data = "text=" + input;
+
+    $.ajax({
+        type: "POST",
+        url: "/user/search/",
+        data: data,
+        success: function(result) {
+            $("#results_box").html(result).show();
+        }
+    });
+
+    return false;
+});

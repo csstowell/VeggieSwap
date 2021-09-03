@@ -1,0 +1,16 @@
+
+.mainTitle{
+    font-family: Comfortaa;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 28.4444px;
+}
+.backgroundImage {
+    position: absolute;
+    width: 1371px;
+    height: 792px;
+    left: 34px;
+    top: 84px;
+
+    background: url('main_veggies.jpeg');
+}

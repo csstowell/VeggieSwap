@@ -57,6 +57,32 @@ def get_user_veggies(username):
 
     return user_produce
 
+def get_user_veggies_by_id(user_id, produce_id):
+    """Takes in a username and returns user's user_produce"""
+    user_produce = db.session.query(UserProduce).select_from(UserProduce).join(User).join(Produce).filter(User.id==user_id).filter(UserProduce.produce_id==produce_id).one()
+
+    return user_produce
+
+def user_produce_exists(user_id, produce_id):
+    """Returns true if you have an entery"""
+    return db.session.query(UserProduce).select_from(UserProduce).join(User).join(Produce).filter(User.id==user_id).filter(UserProduce.produce_id==produce_id).first() is not None 
+
+
+
+def user_produce_update(produce_id, quantity):
+    """Takes ID of existing user_produce"""
+
+    db.session.query(UserProduce).filter(UserProduce.produce_id==produce_id).update({'quantity': quantity)
+    db.session.commit()
+
+    return 
+
+
+
+
+
+
+
 
 # MARKET PRODUCE BY ID
 def get_produce_by_id(id):
@@ -78,20 +104,8 @@ def add_user_produce(produce_id, user_id, quantity, condition):
     db.session.commit()
 
     return user_produce
+# update produce quantity - if existing
 
-# NOT WORKING YET
-def check_exisiting_produce(produce_id):
-    """Takes in string and finds match with Produce in db, if any"""
-
-    existing_produce = db.session.query(
-        UserProduce).filter_by(userproduce_id=userproduce_id).first()
-
-    if existing_produce:
-        db.session.insert(existing_produce)
-        db.session.commit()
-        return flash("existing")
-    else:
-        return user_produce
 # ---------------------------------------------------------
 
 # CREATE EXCHANGE PRODUCE
