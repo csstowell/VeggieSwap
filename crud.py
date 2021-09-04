@@ -72,7 +72,7 @@ def user_produce_exists(user_id, produce_id):
 def user_produce_update(produce_id, quantity):
     """Takes ID of existing user_produce"""
 
-    db.session.query(UserProduce).filter(UserProduce.produce_id==produce_id).update({'quantity': quantity)
+    db.session.query(UserProduce).filter(UserProduce.produce_id==produce_id).update({'quantity': quantity})
     db.session.commit()
 
     return 
