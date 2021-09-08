@@ -9,7 +9,7 @@
     <h1>Exchange</h1>
 
     <script>
-        
+        /*
           if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(showPosition);
           } else { 
@@ -21,13 +21,13 @@
             map.innerHTML = "Latitude: " + position.coords.latitude + 
           "<br>Longitude: " + position.coords.longitude;
         }
-        
+        */
         function initMap() {
           // The location of SF
           const sf = { lat: 37.753506, lng: -122.433315 }; 
           // The map, centered at SF
           const map = new google.maps.Map(document.getElementById("map"), {
-            zoom: 7,
+            zoom: 12,
             center: sf,
           });
             let lat = 0;
@@ -43,10 +43,11 @@
                     lng: lng
                 }
                 new google.maps.Marker({
-                    position: entry,
+                    position: coord,
                     label: '{{ item.user_produce.user.username}}',
                     title: 'title',
                     map: map});
+
                 }
 
             {% endfor %}
@@ -125,11 +126,11 @@
         </table>
 
 
-
+        <!-- AIzaSyB41DRUbKWJHPxaFjMAwdrzWzbVKartNGg -->
 
         <!-- Async script executes immediately and must be after any DOM elements used in callback. -->
         <script
-          src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB41DRUbKWJHPxaFjMAwdrzWzbVKartNGg&callback=initMap&libraries=&v=weekly&channel=2"
+          src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDIYpD84hN93_pAL4oomppVemp3JYSvaRE&callback=initMap&libraries=&v=weekly&channel=2"
           async
         ></script>
 

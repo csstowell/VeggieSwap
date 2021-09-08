@@ -1,6 +1,6 @@
 """CRUD operations"""
 # IMPORT MODEL
-from model import (db, User, Produce, UserProduce, ExchangeProduce, connect_to_db)
+from models import (db, User, Produce, UserProduce, ExchangeProduce, connect_to_db)
 
 # CREATE USER
 def create_user(username, email, password, address, city, zipcode, lat, lng, phone=None):

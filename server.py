@@ -1,28 +1,28 @@
 from flask import (Flask, render_template, request, flash, session, redirect, jsonify, url_for)
-from model import Produce, User, UserProduce, ExchangeProduce, db, connect_to_db
+from models import Produce, User, UserProduce, ExchangeProduce, db, connect_to_db
 import crud
 import googlemaps
-import geocoder
-
+# import geocoder
+from forms import ProduceSearchForm
+from db_setup import init_db, db_session
+init_db()
 
 app = Flask(__name__)
 app.secret_key = "SECRET"
 # ---------------------------------------------------------
 
 # INDEX
+# @app.route('/')
+# def index():
+#     """View index page"""
+#     if 'current_user' not in session:
+#         return redirect('/login')
+#     else:
+#         username = session['current_user']
+#         return redirect(f'/user')
+#     return render_template('home.html')
 
 
-@app.route('/')
-def index():
-    """View index page"""
-    if 'current_user' not in session:
-        return redirect('/login')
-    else:
-        username = session['current_user']
-        return redirect(f'/user')
-    return render_template('home.html')
-
-    
 # HOMEPAGE
 @app.route('/home', methods=['GET', 'POST'])
 def home_page():
@@ -41,13 +41,42 @@ def user_info():
 
 
 # MARKET
-@app.route('/market')
+@app.route('/market', methods=['GET', 'POST'])
 def market_page():
     """View all produce listings from database"""
-
+    search = ProduceSearchForm(request.form)
+    if request.method == 'POST':
+        return search_results(search)
     items = Produce.query.all()
 
-    return render_template('market.html', items=items)
+    return render_template('market.html', items=items, form=search)
+
+
+
+# SEARCH RESULTS
+@app.route('/results')
+def search_results(search):
+    results = []
+    #search_string = search.data['search']
+    form = ProduceSearchForm(request.form)
+    search_string = form.data['search']
+    # if search.data['search'] == '':
+    if request.method == 'POST':
+        qry = db_session.query(Produce).filter_by(name=search_string)
+        results = qry.all()
+    if not results:
+        flash('No results found!')
+        return redirect('/market')
+    else:
+        # display results
+        return render_template('market.html', items=results, form=form)
+
+
+
+
+
+
+
 
 
 # USER
@@ -250,7 +279,27 @@ def handle_logout():
 
     flash(f"You've successfully logged out.")
     return redirect('/login')
-#---------------------------------NEW BELOW--------------------------------#
+#---------------------------------NEW BELOW (MISC) ------------------------------------------#
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 #-------------------------END--------------------------------#

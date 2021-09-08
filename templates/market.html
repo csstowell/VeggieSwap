@@ -18,11 +18,27 @@ Marketplace
 
 <h1>Marketplace</h1>
 <section id="produce-search">
-    <form action="/" id="produce-search-form" class="form-inline justify-content-center">
-        <input type="text" id="produce-search-terms" class="col-3 mr-1" placeholder="Search for produce...">
-        <input type="submit" class="btn btn-primary btn-sm">
-    </form>
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+      <ul class="flashes">
+      {% for message in messages %}
+        <li>{{ message }}</li>
+      {% endfor %}
+      </ul>
+    {% endif %}
+  {% endwith %}
+  {% from "_formhelpers.html" import render_field %}
+  <form method=post>
+    <dl>
+      {{ render_field(form.select) }}
+      <p>
+      {{ render_field(form.search) }}
+    </p></dl>
+    <p><input type=submit value=search>
+  </p></form>
 </section>
+
+
 <section>
     <table class="table table-hover table-dark">
         <thead>
