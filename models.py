@@ -133,7 +133,7 @@ class ExchangeProduce(db.Model):
     def __repr__(self):
         """Show human-readable exchange_produce"""
         return f"<ExchangeProduce id={self.id} "\
-            f"userproduce_id={self.userproduce_id} userProduce={self.userProduce}  userconsumer_id={self.userconsumer_id}>"
+            f"userproduce_id={self.userproduce_id} userProduce={self.userProduce} username={self.userProduce.user.username}  userconsumer_id={self.userconsumer_id}>"
             
     
     

@@ -112,18 +112,18 @@ def add_user_produce(produce_id):
         user_id = session['current_user_id']
         session['quantity'] = request.form['quantity']
         session['condition'] = request.form['condition']
-        new_quantity = session['quantity']
+        new_quantity = int(session['quantity'])
         print('QUANTITY!!!!!!!!', new_quantity)
         condition = session['condition']
         
         if (crud.user_produce_exists(user_id, produce_id)):
             # do an update 
-            crud.user_produce_update(produce_id, new_quantity)
+            crud.user_produce_update(user_idproduce_id, new_quantity)
             flash('Produce has been updated!')
             # session['quantity'] = session['quantity'] + 
             
         else:
-            user_produce = crud.add_user_produce(produce_id, user_id, quantity, condition)
+            user_produce = crud.add_user_produce(produce_id, user_id, new_quantity, condition)
             # print("user produce is :", user_produce)
             # <UserProduce id=67user=kyle produce=Asparagus>
             # print("user produce USER :", user_produce.user)
@@ -189,7 +189,7 @@ def exchange():
         print(item.userProduce.produce.name + ' name\n')
     ## grab user produce id --- find the usernames associated with it -- return 
 
-    return render_template('exchange.html', exchange_items=produce1)
+    return render_template('exchange.html', exchange_items=exchange_items)
 
 
 # # DELETE USER EXCHANGE PRODUCE

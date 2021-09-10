@@ -87,17 +87,18 @@ def user_produce_exists(user_id, produce_id):
 
 
 #############################################################################
-def user_produce_update(produce_id, new_quantity):
+def user_produce_update(user_id,produce_id, new_quantity):
     """Takes ID of existing user_produce"""
 
-    idk = db.session.query(UserProduce).filter(UserProduce.produce_id==produce_id).update({'quantity': new_quantity})
+    userProduce = db.session.query(UserProduce).filter(UserProduce.user_id==user_id).filter(UserProduce.produce_id==produce_id).first()
+    userProduce.quantity += new_quantity
+
     # session['quantity']
-    print('!!!!!! idk !!!!!!!!', idk)
+    print('!!!!!! userProduce !!!!!!!!', userProduce)
     
     
-    # alright = db.session.query(UserProduce).filter_by(quantity).one()
-    # alright = db.query['quantity']
-    # print('!!!! ALRIGHT !!!!!!', alright)
+    # produce_swap=# SELECT * FROM user_produce
+    # produce_swap-# WHERE produce_id = 2;
     
     db.session.commit()
 
@@ -139,7 +140,7 @@ def add_exchange_produce(userproduce_id, amount, comment, userconsumer_id=None, 
     exchange_items = ExchangeProduce(
         userproduce_id=userproduce_id, userconsumer_id=userconsumer_id, amount=amount, comment=comment, date=date, state=state)
     print('HEREEEERREEE')
-    print(db.session.quantity)
+    # print(db.session.quantity)
     db.session.add(exchange_items)
     db.session.commit()
 
