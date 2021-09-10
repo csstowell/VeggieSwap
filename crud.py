@@ -42,6 +42,24 @@ def lookup_email(email):
 
     return email
 
+
+############################################################
+def get_user_produce_by_id(userId):
+    """Returns True if email exists in User table"""
+
+    exchange_items = db.session.query(UserProduce).all()
+
+    return exchange_items
+
+
+#########################################################
+
+
+
+
+
+
+
 # GET USERNAME BY EMAIL
 def get_email_by_username(username):
     """Takes in username and returns email of matching user"""
@@ -64,19 +82,27 @@ def get_user_veggies_by_id(user_id, produce_id):
     return user_produce
 
 def user_produce_exists(user_id, produce_id):
-    """Returns true if you have an entery"""
+    """Returns true if you have an entry"""
     return db.session.query(UserProduce).select_from(UserProduce).join(User).join(Produce).filter(User.id==user_id).filter(UserProduce.produce_id==produce_id).first() is not None 
 
 
-
-def user_produce_update(produce_id, quantity):
+#############################################################################
+def user_produce_update(produce_id, new_quantity):
     """Takes ID of existing user_produce"""
 
-    db.session.query(UserProduce).filter(UserProduce.produce_id==produce_id).update({'quantity': quantity})
+    idk = db.session.query(UserProduce).filter(UserProduce.produce_id==produce_id).update({'quantity': new_quantity})
+    # session['quantity']
+    print('!!!!!! idk !!!!!!!!', idk)
+    
+    
+    # alright = db.session.query(UserProduce).filter_by(quantity).one()
+    # alright = db.query['quantity']
+    # print('!!!! ALRIGHT !!!!!!', alright)
+    
     db.session.commit()
 
     return 
-
+#############################################################################
 
 
 
@@ -112,7 +138,8 @@ def add_user_produce(produce_id, user_id, quantity, condition):
 def add_exchange_produce(userproduce_id, amount, comment, userconsumer_id=None, state=None, date=None):
     exchange_items = ExchangeProduce(
         userproduce_id=userproduce_id, userconsumer_id=userconsumer_id, amount=amount, comment=comment, date=date, state=state)
-    
+    print('HEREEEERREEE')
+    print(db.session.quantity)
     db.session.add(exchange_items)
     db.session.commit()
 

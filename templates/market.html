@@ -16,26 +16,25 @@ Marketplace
     });
 </script> -->
 
-<h1>Marketplace</h1>
+
 <section id="produce-search">
     {% with messages = get_flashed_messages() %}
     {% if messages %}
-      <ul class="flashes">
-      {% for message in messages %}
+    <ul class="flashes">
+        {% for message in messages %}
         <li>{{ message }}</li>
-      {% endfor %}
-      </ul>
+        {% endfor %}
+    </ul>
     {% endif %}
-  {% endwith %}
-  {% from "_formhelpers.html" import render_field %}
-  <form method=post>
-    <dl>
-      {{ render_field(form.select) }}
-      <p>
-      {{ render_field(form.search) }}
-    </p></dl>
-    <p><input type=submit value=search>
-  </p></form>
+    {% endwith %}
+    {% from "_formhelpers.html" import render_field %}
+    <form method=post>
+        <dl>
+            <p>{{ render_field(form.search) }}</p>
+        </dl>
+        <p><input type=submit value=search>
+        </p>
+    </form>
 </section>
 
 
@@ -63,7 +62,7 @@ Marketplace
                 <td>{{ item.store }}</td>
                 <td>{{ item.variety }}</td>
                 <td>
-                    <a class="btn btn-primary" href="/market/{{ item.id }}">Details</a>
+                    <a class="btn btn-primary" href="/market/{{ item.id }}">Add</a>
                 </td>
             </tr>
             {% endfor %}

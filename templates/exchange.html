@@ -32,11 +32,10 @@
           });
             let lat = 0;
             let lng = 0;
-            {% for item in exchange_items %}
-
-                console.log('{{item.user_produce.user}}')
-                lat = {{ item.user_produce.user.lat }};
-                lng = {{ item.user_produce.user.lng }};
+                console.log('HERE #####: item')
+                
+                lat = 0 // item.user_produce.user.lat ;
+                lng = 0 // item.user_produce.user.lng ;
                 if (lat != 'None') {
                   const coord = {
                     lat: lat,
@@ -44,29 +43,13 @@
                 }
                 new google.maps.Marker({
                     position: coord,
-                    label: '{{ item.user_produce.user.username}}',
+                    label: 'item.user_produce.user.username',
                     title: 'title',
                     map: map});
 
                 }
 
-            {% endfor %}
-/*
-          const gardens = [
-          { lat: 37.753506, lng: -122.433315 },
-          { lat: 37.759506, lng: -122.434315 },
-          { lat: 37.775506, lng: -122.455315 }, 
-          ];
 
-          gardens.forEach((entry)=>{
-            new google.maps.Marker({
-            position: entry,
-            label: 'garden#1',
-            title: 'title',
-            map: map});
-          })
-
-*/
           // The marker, positioned at SF
           const marker = new google.maps.Marker({
             position: sf,
@@ -97,6 +80,7 @@
                 <thead>
                     <tr>
                         <!-- Your Columns HERE -->
+                        <th scope="col">TEST</th>
                         <th scope="col">User</th>
                         <th scope="col">Produce</th>
                         <th scope="col">Quantity</th>
@@ -107,18 +91,12 @@
                 </thead>
                 <tbody>
                     <!-- Your rows inside the table HERE: -->
-                    {% for item in exchange_items %}
                         <tr>
-                            <td>{{ item.user_produce.user.username}}</td>
-                            <td>{{ item.user_produce.produce.name }}</td>
-                            <td>{{ item.amount }}</td>
-                            <td>{{ item.comment }}</td>
-                            <td>{{ item.date }}</td>
+                            <td>{{ exchange_items.produce.name }}</td>
+                            <td>{{ exchange_items.user.username }}</td>
                             <td>
-                                <a class="btn btn-primary" href="/contact/{{ item.id }}">Contact</a>
                             </td>
                         </tr>
-                    {% endfor %}
                 </tbody>
             </table>
             </td>

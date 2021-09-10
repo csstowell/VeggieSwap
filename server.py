@@ -11,16 +11,16 @@ app = Flask(__name__)
 app.secret_key = "SECRET"
 # ---------------------------------------------------------
 
-# INDEX
-# @app.route('/')
-# def index():
-#     """View index page"""
-#     if 'current_user' not in session:
-#         return redirect('/login')
-#     else:
-#         username = session['current_user']
-#         return redirect(f'/user')
-#     return render_template('home.html')
+#INDEX
+@app.route('/')
+def index():
+    """View index page"""
+    if 'current_user' not in session:
+        return redirect('/login')
+    else:
+        username = session['current_user']
+        return redirect(f'/home')
+    return render_template('home.html')
 
 
 # HOMEPAGE
@@ -57,10 +57,10 @@ def market_page():
 @app.route('/results')
 def search_results(search):
     results = []
-    #search_string = search.data['search']
+
     form = ProduceSearchForm(request.form)
     search_string = form.data['search']
-    # if search.data['search'] == '':
+
     if request.method == 'POST':
         qry = db_session.query(Produce).filter_by(name=search_string)
         results = qry.all()
@@ -70,14 +70,6 @@ def search_results(search):
     else:
         # display results
         return render_template('market.html', items=results, form=form)
-
-
-
-
-
-
-
-
 
 # USER
 @app.route('/user', methods=['GET', 'POST'])
@@ -120,13 +112,16 @@ def add_user_produce(produce_id):
         user_id = session['current_user_id']
         session['quantity'] = request.form['quantity']
         session['condition'] = request.form['condition']
-        quantity = session['quantity']
+        new_quantity = session['quantity']
+        print('QUANTITY!!!!!!!!', new_quantity)
         condition = session['condition']
         
         if (crud.user_produce_exists(user_id, produce_id)):
             # do an update 
-            crud.user_produce_update(produce_id, quantity)
-            flash('Produce has been updated to your garden!')
+            crud.user_produce_update(produce_id, new_quantity)
+            flash('Produce has been updated!')
+            # session['quantity'] = session['quantity'] + 
+            
         else:
             user_produce = crud.add_user_produce(produce_id, user_id, quantity, condition)
             # print("user produce is :", user_produce)
@@ -153,15 +148,6 @@ def delete_user_produce(id):
 
 
 # -----------------  EXCHANGE PRODUCE ------------------------->
-# DISPLAY EXCHANGE PAGE
-@app.route('/exchange')
-def exchange():
-    """Show exchange page"""
-
-    exchange_items = ExchangeProduce.query.all()
-
-    return render_template('exchange.html', exchange_items=exchange_items)
-
 
 # ADD USER EXCHANGE PRODUCE
 @app.route('/user/exchange/<int:id>', methods=['GET', 'POST'])
@@ -184,9 +170,41 @@ def add_exchange_produce(id):
         # flash('Produce has been removed from garden!')
         
         return redirect('/user')
+    return render_template('exchange.html', exchange_items=exchange_items)
 
 
+# DISPLAY EXCHANGE PAGE
+@app.route('/exchange')
+def exchange():
+    """Show exchange page"""
+    
+    #username= session['current_user']
+    #userId = session['current_user_id']
+    #exchange_items = crud.get_user_produce_by_id(userId)
+    exchange_items = ExchangeProduce.query.all()
+    produce1 = exchange_items[0].userProduce
+    # print(produce1)
+    print('!!!!!!!!!!!!!!', exchange_items)
+    for item in exchange_items:
+        print(item.userProduce.produce.name + ' name\n')
+    ## grab user produce id --- find the usernames associated with it -- return 
+
+    return render_template('exchange.html', exchange_items=produce1)
+
+
+# # DELETE USER EXCHANGE PRODUCE
+# @app.route("/exchange/delete/<int:id>", methods=['GET', 'POST'])
+# def delete_user_exchange_item(id):
+#     if request.method == 'POST':
+#         user_exchange_produce_id = ExchangeProduce.query.get(user_produce.id)
+#         print('EXCHANGE ID IS!!!!!!!! : ', user_exchange_produce_id)
+#         db.session.delete(user_exchange_produce_id)
+#         db.session.commit()
+#         flash('Produce has been deleted!')
+
+#     return redirect('/exchange')
 #---------------------------LOGIN/REGISTER HANDLERS------------------------------------------#
+
 
 # LOGIN
 @app.route('/login', methods=['GET', 'POST'])

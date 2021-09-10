@@ -37,6 +37,8 @@ class User(db.Model):
     lng = db.Column(db.Float)
     phone = db.Column(db.String, unique=True)
     
+    produce = db.relationship("Produce", secondary="user_produce")
+    
     def __repr__(self):
         return f"<User id={self.id } email={self.email} username={self.username} lat={self.lat} lng={self.lng}>"
 
@@ -71,13 +73,15 @@ class UserProduce(db.Model):
     __tablename__ = "user_produce"
 
     id = db.Column(db.Integer, autoincrement=True, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
-    produce_id = db.Column(db.Integer, db.ForeignKey("produce.id"), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id", primary_key=True), nullable=False)
+    produce_id = db.Column(db.Integer, db.ForeignKey("produce.id", primary_key=True), nullable=False)
     quantity = db.Column(db.Integer, nullable=False)
     condition = db.Column(db.Text, nullable=False)
 
-    user = db.relationship('User', backref="user_produce")
-    produce = db.relationship('Produce', backref="user_produce")
+    #user = db.relationship('User', backref="user_produce")
+    #produce = db.relationship('Produce', backref="user_produce")
+    user = db.relationship('User')
+    produce = db.relationship('Produce')
     
     userproduce_id = db.relationship('ExchangeProduce', backref="user_produce")
 
@@ -110,21 +114,31 @@ class ExchangeProduce(db.Model):
     __tablename__ = "exchange_produce"
 
     id = db.Column(db.Integer, autoincrement=True, primary_key=True)
-    userproduce_id = db.Column(db.Integer, db.ForeignKey('user_produce.id'))
-    userconsumer_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    userconsumer_id = db.Column(db.Integer, db.ForeignKey('users.id')) # Seller ID 
+    userproduce_id = db.Column(db.Integer, db.ForeignKey('user_produce.id')) # Buyer ID
+
     amount = db.Column(db.Integer, nullable=False)
     comment = db.Column(db.String)
     date = db.Column(db.Date, nullable=True)
     state = db.Column(db.String)
+    # offered_produce_id 
+    # user1 --- adds to profile --- possibly approve exchange/ boolean 
+    # vs user2 --- comes profile & clicks exchange
 
-    user_exchange_produce = db.relationship('UserProduce', backref="exchange_produce")
+    #user_exchange_produce = db.relationship('UserProduce', backref="exchange_produce")
+    #X = db.relationship('UserProduce', secondary='join(ExchangeProduce, UserProduce, ExchangeProduce.userproduce_id == UserProduce.id)', uselist=False, viewonly=True, backref='exchange_produce', sync_backref=False)
+    userProduce = db.relationship('UserProduce')
     produce = db.relationship('Produce', secondary='join(UserProduce, Produce, UserProduce.produce_id == Produce.id)', uselist=False, viewonly=True, backref='exchange_produce', sync_backref=False)
 
     def __repr__(self):
         """Show human-readable exchange_produce"""
         return f"<ExchangeProduce id={self.id} "\
-            f"userproduce_id={self.userproduce_id.produce.name} userconsumer_id={self.userconsumer_id.users.username}>"
+            f"userproduce_id={self.userproduce_id} userProduce={self.userProduce}  userconsumer_id={self.userconsumer_id}>"
             
+    
+    
+    
+    
     
 
 
