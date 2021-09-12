@@ -1,4 +1,5 @@
-from flask import (Flask, render_template, request, flash, session, redirect, jsonify, url_for)
+from flask import (Flask, render_template, request, flash,
+                   session, redirect, jsonify, url_for)
 from models import Produce, User, UserProduce, ExchangeProduce, db, connect_to_db
 import crud
 import googlemaps
@@ -11,7 +12,9 @@ app = Flask(__name__)
 app.secret_key = "SECRET"
 # ---------------------------------------------------------
 
-#INDEX
+# INDEX
+
+
 @app.route('/')
 def index():
     """View index page"""
@@ -34,6 +37,8 @@ def home_page():
     return render_template('home.html')
 
 # USER-INFO
+
+
 @app.route('/home/user_info', methods=['GET', 'POST'])
 def user_info():
     """Show user's info"""
@@ -51,9 +56,9 @@ def market_page():
 
     return render_template('market.html', items=items, form=search)
 
-
-
 # SEARCH RESULTS
+
+
 @app.route('/results')
 def search_results(search):
     results = []
@@ -71,30 +76,22 @@ def search_results(search):
         # display results
         return render_template('market.html', items=results, form=form)
 
+
 # USER
 @app.route('/user', methods=['GET', 'POST'])
 def user_page():
     """View all user produce"""
-    if 'current_user' in session: 
-        username= session['current_user']
+    if 'current_user' in session:
+        username = session['current_user']
         user_produce = crud.get_user_veggies(username)
 
     else:
         return redirect('/login')
     return render_template("user.html", user_produce=user_produce)
 
-
-
-
-    # if 'current_user_id' in session:
-    #     session['current_user_id'] = (UserProduce.user_id)
-    #     user_id = session['current_user_id']
-    #     print("USER ID IS: !!!!!!", user_id)
-    #     user_produce = crud.get_user_produce(user_id)
-    #     print("USER PRODUCE IS: !!!!!!!", user_produce)
-
-
 # SHOW PRODUCE BY ID
+
+
 @app.route('/market/<produce_id>', methods=['POST', 'GET'])
 def show_produce(produce_id):
     '''Return produce details & provide button to add produce.'''
@@ -107,7 +104,7 @@ def show_produce(produce_id):
 @app.route('/add_user_produce/<int:produce_id>', methods=['POST', 'GET'])
 def add_user_produce(produce_id):
     '''add user produce to user_page'''
-            
+
     if request.method == 'POST':
         user_id = session['current_user_id']
         session['quantity'] = request.form['quantity']
@@ -115,21 +112,15 @@ def add_user_produce(produce_id):
         new_quantity = int(session['quantity'])
         print('QUANTITY!!!!!!!!', new_quantity)
         condition = session['condition']
-        
+
         if (crud.user_produce_exists(user_id, produce_id)):
-            # do an update 
-            crud.user_produce_update(user_idproduce_id, new_quantity)
+            # do an update
+            crud.user_produce_update(user_id, produce_id, new_quantity)
             flash('Produce has been updated!')
-            # session['quantity'] = session['quantity'] + 
-            
+
         else:
-            user_produce = crud.add_user_produce(produce_id, user_id, new_quantity, condition)
-            # print("user produce is :", user_produce)
-            # <UserProduce id=67user=kyle produce=Asparagus>
-            # print("user produce USER :", user_produce.user)
-            # user produce USER : <User id=8 email=kyle_marks@hotmail.com username=kyle>
-            # print("user produce USER :", user_produce.user_id)
-            # user produce USER : 8
+            user_produce = crud.add_user_produce(
+                produce_id, user_id, new_quantity, condition)
         flash('Produce has been added to your garden!')
         return redirect('/user')
     return render_template('user.html', user_produce=user_produce)
@@ -155,21 +146,20 @@ def add_exchange_produce(id):
     """Adds vegetable from user's produce to the exchange"""
 
     if request.method == 'POST':
-        session['userproduce_id'] = (id)
-        userproduce_id = session['userproduce_id']
-        amount = 3
-        comment = 'Msg me for phone number'
-        exchange_items = crud.add_exchange_produce(userproduce_id, amount, comment)
-        flash('Produce has been added to the exchange!')
+        userproduce_id = int(session['userproduce_id'])
+        if(crud.user_exchange_exists(userproduce_id)):
+            flash('Produce has already been added!')
+            # session['userproduce_id'] = (id)
+            print('user produce id!!!!!', userproduce_id)
+            amount = 3
+            comment = 'Msg me for phone number'
+            return redirect('/user')
 
-        # user_produce_id = UserProduce.query.get(id)
-        # # print('USERPRODUCE_ID IS: ', user_produce_id)
-        # # <UserProduce id=78user=bella produce=Kale>
-        # db.session.delete(user_produce_id)
-        # db.session.commit()
-        # flash('Produce has been removed from garden!')
-        
-        return redirect('/user')
+        else:
+            exchange_items = crud.add_exchange_produce(userproduce_id, amount, comment)
+        flash('Added to the exchange!')
+        return redirect('/exchange')
+    
     return render_template('exchange.html', exchange_items=exchange_items)
 
 
@@ -177,20 +167,25 @@ def add_exchange_produce(id):
 @app.route('/exchange')
 def exchange():
     """Show exchange page"""
-    
-    #username= session['current_user']
-    #userId = session['current_user_id']
-    #exchange_items = crud.get_user_produce_by_id(userId)
+
     exchange_items = ExchangeProduce.query.all()
     produce1 = exchange_items[0].userProduce
-    # print(produce1)
     print('!!!!!!!!!!!!!!', exchange_items)
     for item in exchange_items:
         print(item.userProduce.produce.name + ' name\n')
-    ## grab user produce id --- find the usernames associated with it -- return 
-
     return render_template('exchange.html', exchange_items=exchange_items)
 
+###############################################################
+
+# # ADD USER- EXCHANGE produce
+# @app.route('/exchange/<int:userProduce_id ')
+# def add_exchange(userProduce_id):
+#     ''''Add user produce to the exchange page'''
+#     if request.method == 'POST':
+#         userconsumer_id = session['current_user_id']   # SELLER ID
+
+
+###############################################################
 
 # # DELETE USER EXCHANGE PRODUCE
 # @app.route("/exchange/delete/<int:id>", methods=['GET', 'POST'])
@@ -214,6 +209,7 @@ def login_page():
     return render_template('login.html')
 
 # REGISTER
+
 @app.route('/register', methods=['GET', 'POST'])
 def register_page():
     """View sign up form"""
@@ -266,9 +262,10 @@ def handle_register():
         else:
             # # construct full address
             full_address = address + "," + city + "," + state + "," + zipcode
-            
+
             # call gmaps.geocode to get lat/lng
-            gmaps = googlemaps.Client(key='AIzaSyDIYpD84hN93_pAL4oomppVemp3JYSvaRE')
+            gmaps = googlemaps.Client(
+                key='AIzaSyDIYpD84hN93_pAL4oomppVemp3JYSvaRE')
 
             # Geocoding an address
             geocode_result = gmaps.geocode(full_address)
@@ -276,7 +273,6 @@ def handle_register():
             lat = geocode_result[0]["geometry"]["location"]["lat"]
             lng = geocode_result[0]["geometry"]["location"]["lng"]
 
-            
             user = crud.create_user(
                 username, email, password1, address, city, zipcode, lat, lng)
             session['current_user'] = username
@@ -288,6 +284,7 @@ def handle_register():
             return redirect(f'/user')
 
 # LOGOUT PAGE
+
 @app.route('/logout')
 def handle_logout():
     """Logs player out"""
@@ -298,26 +295,6 @@ def handle_logout():
     flash(f"You've successfully logged out.")
     return redirect('/login')
 #---------------------------------NEW BELOW (MISC) ------------------------------------------#
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 #-------------------------END--------------------------------#

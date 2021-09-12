@@ -114,8 +114,8 @@ class ExchangeProduce(db.Model):
     __tablename__ = "exchange_produce"
 
     id = db.Column(db.Integer, autoincrement=True, primary_key=True)
-    userconsumer_id = db.Column(db.Integer, db.ForeignKey('users.id')) # Seller ID 
-    userproduce_id = db.Column(db.Integer, db.ForeignKey('user_produce.id')) # Buyer ID
+    userconsumer_id = db.Column(db.Integer, db.ForeignKey('users.id')) # BUYER ID 
+    userproduce_id = db.Column(db.Integer, db.ForeignKey('user_produce.id')) # Seller's goods ID
 
     amount = db.Column(db.Integer, nullable=False)
     comment = db.Column(db.String)
