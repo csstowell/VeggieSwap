@@ -116,7 +116,6 @@ def add_user_produce(produce_id):
         if (crud.user_produce_exists(user_id, produce_id)):
             # do an update
             crud.user_produce_update(user_id, produce_id, new_quantity)
-            flash('Produce has been updated!')
 
         else:
             user_produce = crud.add_user_produce(
@@ -147,15 +146,15 @@ def add_exchange_produce(id):
 
     if request.method == 'POST':
         userproduce_id = int(session['userproduce_id'])
+        print('user produce id!!!!!', userproduce_id)
         if(crud.user_exchange_exists(userproduce_id)):
             flash('Produce has already been added!')
             # session['userproduce_id'] = (id)
-            print('user produce id!!!!!', userproduce_id)
-            amount = 3
-            comment = 'Msg me for phone number'
             return redirect('/user')
 
         else:
+            amount = 3
+            comment = 'Msg me for phone number'
             exchange_items = crud.add_exchange_produce(userproduce_id, amount, comment)
         flash('Added to the exchange!')
         return redirect('/exchange')
