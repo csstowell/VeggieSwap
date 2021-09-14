@@ -1,6 +1,26 @@
 {% extends 'base.html' %}
 
 
+
+
+{% block body %}
+<div>
+    Hello
+    <!-- <div class="backgroundImage"> -->
+        
+    </div>
+</div>
+    {% block form %}
+        <h1>Enter Address:</h1>
+        <form method="post">
+            <label for="address">Enter your address:</label>
+            <input type="address" id="address" name="home_address" required />
+            <button type="submit">Submit</button
+        </form>
+    {% endblock%}
+{% endblock%}
+
+
 {% block body %}
 <article>
     <h1>Hi {{ session['current_user'] }}!</h1>

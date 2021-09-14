@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block body %}
+<div>
+    <!-- <div class="backgroundImage"> -->        
+</div>
+    {% block form %}
+        <h1>Enter distance:</h1>
+        <form method="post">
+            <label for="distance">Enter distance:</label>
+            <input type="distance" id="distance" name="distance" required />
+            <button type="submit">Submit</button
+        </form>
+    {% endblock%}
+{% endblock%}
+
+
+{% block body %}
+<article>
+    <h1>Hi {{ session['current_user'] }}!</h1>
+    {% if session['address'] %}
+        You're address is: {{ session['address'] }}!
+        <ul>
+            {% for address in address %}
+                <li>{{ address }}</li>
+            {% endfor %}
+        </ul>
+    <h1>Welcome! Get started <a href="{{ url_for('exchange_page') }}">here.</a></h1>
+        {% endif %}
+</article>
+{% endblock %}

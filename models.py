@@ -78,8 +78,6 @@ class UserProduce(db.Model):
     quantity = db.Column(db.Integer, nullable=False)
     condition = db.Column(db.Text, nullable=False)
 
-    #user = db.relationship('User', backref="user_produce")
-    #produce = db.relationship('Produce', backref="user_produce")
     user = db.relationship('User')
     produce = db.relationship('Produce')
     
@@ -101,7 +99,7 @@ class UserProduce(db.Model):
             'quantity': self.quantity,
             'email': self.user.email,
             'username': self.user.username,
-            'zipcode': self.user.zipcode,
+            'zipcode': self.user.zipcode
         }
 
 

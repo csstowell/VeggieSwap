@@ -13,8 +13,6 @@ app.secret_key = "SECRET"
 # ---------------------------------------------------------
 
 # INDEX
-
-
 @app.route('/')
 def index():
     """View index page"""
@@ -57,8 +55,6 @@ def market_page():
     return render_template('market.html', items=items, form=search)
 
 # SEARCH RESULTS
-
-
 @app.route('/results')
 def search_results(search):
     results = []
@@ -90,8 +86,6 @@ def user_page():
     return render_template("user.html", user_produce=user_produce)
 
 # SHOW PRODUCE BY ID
-
-
 @app.route('/market/<produce_id>', methods=['POST', 'GET'])
 def show_produce(produce_id):
     '''Return produce details & provide button to add produce.'''
@@ -145,9 +139,9 @@ def add_exchange_produce(id):
     """Adds vegetable from user's produce to the exchange"""
 
     if request.method == 'POST':
-        userproduce_id = int(session['userproduce_id'])
-        print('user produce id!!!!!', userproduce_id)
-        if(crud.user_exchange_exists(userproduce_id)):
+        #userproduce_id = int(session['userproduce_id'])
+        print('user produce id!!!!!', id)
+        if(crud.user_exchange_exists(id)):
             flash('Produce has already been added!')
             # session['userproduce_id'] = (id)
             return redirect('/user')
@@ -155,7 +149,7 @@ def add_exchange_produce(id):
         else:
             amount = 3
             comment = 'Msg me for phone number'
-            exchange_items = crud.add_exchange_produce(userproduce_id, amount, comment)
+            exchange_items = crud.add_exchange_produce(id, amount, comment)
         flash('Added to the exchange!')
         return redirect('/exchange')
     
@@ -163,42 +157,42 @@ def add_exchange_produce(id):
 
 
 # DISPLAY EXCHANGE PAGE
+
 @app.route('/exchange')
 def exchange():
     """Show exchange page"""
-
+    float(distance) = request.args.get('distance')
     exchange_items = ExchangeProduce.query.all()
-    produce1 = exchange_items[0].userProduce
-    print('!!!!!!!!!!!!!!', exchange_items)
-    for item in exchange_items:
-        print(item.userProduce.produce.name + ' name\n')
+    
     return render_template('exchange.html', exchange_items=exchange_items)
 
 ###############################################################
 
-# # ADD USER- EXCHANGE produce
-# @app.route('/exchange/<int:userProduce_id ')
-# def add_exchange(userProduce_id):
-#     ''''Add user produce to the exchange page'''
-#     if request.method == 'POST':
-#         userconsumer_id = session['current_user_id']   # SELLER ID
+# DISPLAY EXCHANGE BY DISTANCE
+# @app.route('/exchange/<int:distance>', defaults={'distance': 10})
+# def exchange():
+#     """Show exchange page"""
+
+
+
+@app.route('/exchange/exchange_distance', methods=['GET', 'POST'])
+def exchange_distance():
+    """Show exchange distance/radius"""
+    
+    return render_template('exchange_distance.html')
+    
+
+
+
+
+
+
 
 
 ###############################################################
 
-# # DELETE USER EXCHANGE PRODUCE
-# @app.route("/exchange/delete/<int:id>", methods=['GET', 'POST'])
-# def delete_user_exchange_item(id):
-#     if request.method == 'POST':
-#         user_exchange_produce_id = ExchangeProduce.query.get(user_produce.id)
-#         print('EXCHANGE ID IS!!!!!!!! : ', user_exchange_produce_id)
-#         db.session.delete(user_exchange_produce_id)
-#         db.session.commit()
-#         flash('Produce has been deleted!')
 
-#     return redirect('/exchange')
 #---------------------------LOGIN/REGISTER HANDLERS------------------------------------------#
-
 
 # LOGIN
 @app.route('/login', methods=['GET', 'POST'])

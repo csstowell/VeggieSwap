@@ -122,11 +122,6 @@ def user_exchange_exists(userproduce_id):
 
 
 
-
-
-
-
-
 # CREATE EXCHANGE PRODUCE
 def add_exchange_produce(userproduce_id, amount, comment, userconsumer_id=None, state=None, date=None):
     
