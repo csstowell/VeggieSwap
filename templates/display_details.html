@@ -7,7 +7,7 @@
 <div class="row">
 
     <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">
-        <img src="{{ display_produce.img_url }}" class="img-responsive">
+        <img src="/static/img/veggies/{{ display_produce.name }}.jpeg" class="img-responsive">
     </div>
 
     <div class="col-xs-8 col-sm-6 col-md-4 col-lg-3">
@@ -24,8 +24,6 @@
                 <input type="quantity" id="quantity" name="quantity" required />
                 <button type="submit" href="/add_user_produce/{{ display_produce.id }}">Add</button><br>
                 <br>
-
-
             </form>
         </div>
     </div>

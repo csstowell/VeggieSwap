@@ -21,22 +21,30 @@
 <body>
   <div class="container">
     <div class="row align-items-center">
-      <h1 class="mainTitle">VeggieSwap</h1>
-      <nav>
-        <a href="/home">Home</a> |
-        <a href="/market">Search</a> |
-        <a href="/user">Profile</a> |
-        <a href="/exchange">Exchange</a> |
-        <a href="/login">Login</a> |
-        <a href="/logout">Logout</a>
-      </nav>
-    </div>
-  </div>
 
+        <h1 class="mainTitle">VeggieSwap</h1>
+
+
+        <nav>
+          <a href="/home">Home</a> |
+          <a href="/market">Search</a> |
+          <a href="/user">Profile</a> |
+          <a href="/exchange">Exchange</a> |
+          <a href="/login">Login</a> |
+          <a href="/logout">Logout</a>
+        </nav>
+    </div>
+
+
+      <!-- This is where the main content goes. -->
+      {% block body %}
+
+      {% endblock %}
+    </div>
 </body>
 
 
-  <div class="containerX">
+  <div class="container">
     <!-- Show flashed messages -->
     {% with messages = get_flashed_messages() %}
     {% for message in messages %}
@@ -44,16 +52,9 @@
     {% endfor %}
     {% endwith %}
 
-    <!-- This is where the main content goes. -->
-    {% block body %}
 
-    {% endblock %}
   </div>
 
-
-  {% block content %}
-  {% endblock %}
-  <!-- Future Content here -->
 
   <script src='https://kit.fontawesome.com/a076d05399.js'></script>
   <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"

@@ -3,12 +3,33 @@
 {% block title %}User's Page{% endblock %}
 
 {% block body %}
+
+
+<section id="produce-search">
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <ul class="flashes">
+        {% for message in messages %}
+        <li>{{ message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+    {% endwith %}
+    {% from "_formhelpers.html" import render_field %}
+    <form method=post>
+        <dl>
+            <p>{{ render_field(form.search) }}</p>
+        </dl>
+        <p><input type=submit value=search>
+        </p>
+    </form>
+</section>
+
+
 <h1>{{ session['current_user'] }}'s Garden:</h1>
-<table class="table table-hover table-dark">
+<table class="table table-hover">
     <thead>
         <tr>
-            <!-- Your Columns HERE -->
-            <th scope="col">ID</th>
             <th scope="col">Produce</th>
             <th scope="col">Quantity</th>
             <th scope="col">Condition</th>
@@ -19,23 +40,17 @@
         <!-- Your rows inside the table HERE: -->
         {% for user_produce in user_produce %}
         <tr>
-            <td>{{ user_produce.user.username }}</td>
             <td>{{ user_produce.produce.name }}</td>
             <td>{{ user_produce.quantity }}</td>
             <td>{{ user_produce.condition }}</td>
             <td>
-
                 <form action="{{ url_for('add_exchange_produce', id=user_produce.id) }}" method="post">
-                    <input class="btn" id="exchange_produce" name="exchange_produce" />
-                    <input type="submit" value="Exchange" />
+                    <input class="btn btn-secondary"  type="submit" value="Exchange" />
                 </form> 
 
                 <form action="{{ url_for('delete_user_produce', id=user_produce.id) }}" method="post">
-                    <input class="btn" id="delete_user_produce" name="delete_user_produce" />
                     <input type="submit" value="Delete" />
                 </form> 
-
-
             </td>
         </tr>
         {% endfor %}

@@ -77,13 +77,20 @@ def search_results(search):
 @app.route('/user', methods=['GET', 'POST'])
 def user_page():
     """View all user produce"""
+    
+    search = ProduceSearchForm(request.form)
+    if request.method == 'POST':
+        return search_results(search)
+    items = Produce.query.all()
+    
     if 'current_user' in session:
         username = session['current_user']
         user_produce = crud.get_user_veggies(username)
 
     else:
         return redirect('/login')
-    return render_template("user.html", user_produce=user_produce)
+    
+    return render_template("user.html", user_produce=user_produce, form=search)
 
 # SHOW PRODUCE BY ID
 @app.route('/market/<produce_id>', methods=['POST', 'GET'])
@@ -157,11 +164,12 @@ def add_exchange_produce(id):
 
 
 # DISPLAY EXCHANGE PAGE
-
 @app.route('/exchange')
 def exchange():
     """Show exchange page"""
-    float(distance) = request.args.get('distance')
+    radius_in_miles = request.args.get('distance')
+    # exchangesWithinCircle = crud.get_exchange_by_distance(radius_in_miles, center_lat=37.753506, center_lng=-122.433315)
+    # exchange_items = get_exchange_by_distance(center_lat, center_lng, radius_in_miles)
     exchange_items = ExchangeProduce.query.all()
     
     return render_template('exchange.html', exchange_items=exchange_items)
