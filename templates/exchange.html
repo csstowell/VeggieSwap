@@ -7,6 +7,7 @@ Marketplace
 
 {% block body %}
 
+<!------------------- MAP ------------------->
 <script>
   /*
     if (navigator.geolocation) {
@@ -49,7 +50,6 @@ Marketplace
 
     }
 
-
     // The marker, positioned at SF
     const marker = new google.maps.Marker({
       position: sf,
@@ -65,13 +65,9 @@ Marketplace
     });
     circle.bindTo('center', marker, 'position');
   }
-
 </script>
 
-
-
-
-
+<!------------------- RADIUS SEARCH ------------------->
 <div class="container">
   <div class="row">
     {% block form %}
@@ -87,14 +83,15 @@ Marketplace
       <button class="btn btn-secondary searchButton" type="submit" href="/exchange/">Search</button>
       {% endblock%}
   </div>
-  
+
+<!------------------- EXCHANGES (produceEntry.html) -------------------------->
   <div class="row align-items-start">
     <div class="col-8">
       <div style="height: 100vh; width: 100%;">
         <div id="map" style="height:100%; width: 100%;"></div>
       </div>
     </div>
-    <div class="col-4">
+    <div class="col-4 container">
       {% for item in exchange_items %}
       {% include "produceEntry.html" %}
       {% endfor %}
@@ -102,37 +99,14 @@ Marketplace
   </div>
 </div>
 
-<div class="modal" tabindex="-1" role="dialog">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Modal title</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <p>Modal body text goes here.</p>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-primary">Save changes</button>
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-      </div>
-    </div>
-  </div>
-</div>
 
-<!-- Button trigger modal -->
-<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
-  Launch demo modal
-</button>
 
-<!-- AIzaSyB41DRUbKWJHPxaFjMAwdrzWzbVKartNGg -->
 
+
+
+<!-- KEY: AIzaSyB41DRUbKWJHPxaFjMAwdrzWzbVKartNGg -->
 <!-- Async script executes immediately and must be after any DOM elements used in callback. -->
 <script
   src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDIYpD84hN93_pAL4oomppVemp3JYSvaRE&callback=initMap&libraries=&v=weekly&channel=2"
   async></script>
-
-
 {% endblock %}

@@ -1,10 +1,33 @@
 <div class="row">
-    <div class="col-5">{{ item.userProduce.produce.name }}</div>
-    <div class="col-4">{{ item.userProduce.user.username }} </div>
-    <div class="col-1">{{ item.userProduce.quantity }}</div>
-    <div class="col-2">
-        <a class="btn btn-primary" href="/contact/{{ item.id }}">Contact</a>
+    <div class="col">
+        <img class="profileBackgroundImage" src="static/img/veggies/{{ item.userProduce.produce.name }}.jpeg"
+        object-position="center" alt="{{ item.userProduce.produce.name }}"> </img>
     </div>
-    
-    
+</div>
+
+<div class="row align-items-center">
+    <div class="col">{{ item.userProduce.user.username }} </div>
+    <div class="col">
+        <button type="button" class="btn email-button" data-toggle="modal" data-target="#myModal"></button>
+    </div>
+</div>
+
+<!-- Modal -->
+<div id="myModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+
+                <h4 class="modal-title">Contact</h4>
+            </div>
+            <div class="modal-body">
+                <p>Some text in the modal.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+
+    </div>
 </div>
