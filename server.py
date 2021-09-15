@@ -141,7 +141,8 @@ def add_exchange_produce(id):
     """Adds vegetable from user's produce to the exchange"""
 
     if request.method == 'POST':
-        #userproduce_id = int(session['userproduce_id'])
+        # userproduce_id = int(session['userproduce_id'])
+        # print('userproduce_id IS', userproduce_id)
         print('user produce id!!!!!', id)
         if(crud.user_exchange_exists(id)):
             flash('Produce has already been added!')
@@ -151,7 +152,8 @@ def add_exchange_produce(id):
         else:
             amount = 3
             comment = 'Msg me for phone number'
-            exchange_items = crud.add_exchange_produce(id, amount, comment)
+            userproduce_id = id
+            exchange_items = crud.add_exchange_produce(userproduce_id, amount, comment)
         flash('Added to the exchange!')
         return redirect('/exchange')
     
