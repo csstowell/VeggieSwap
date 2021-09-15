@@ -1,5 +1,4 @@
-from flask import (Flask, render_template, request, flash,
-                   session, redirect, jsonify, url_for)
+from flask import (Flask, render_template, request, flash, session, redirect, jsonify, url_for)
 from models import Produce, User, UserProduce, ExchangeProduce, db, connect_to_db
 import crud
 import googlemaps
@@ -35,8 +34,6 @@ def home_page():
     return render_template('home.html')
 
 # USER-INFO
-
-
 @app.route('/home/user_info', methods=['GET', 'POST'])
 def user_info():
     """Show user's info"""
@@ -138,8 +135,6 @@ def delete_user_produce(id):
     return redirect('/user')
 
 
-# -----------------  EXCHANGE PRODUCE ------------------------->
-
 # ADD USER EXCHANGE PRODUCE
 @app.route('/user/exchange/<int:id>', methods=['GET', 'POST'])
 def add_exchange_produce(id):
@@ -174,14 +169,8 @@ def exchange():
     
     return render_template('exchange.html', exchange_items=exchange_items)
 
-###############################################################
 
-# DISPLAY EXCHANGE BY DISTANCE
-# @app.route('/exchange/<int:distance>', defaults={'distance': 10})
-# def exchange():
-#     """Show exchange page"""
-
-
+# -----------------  EXCHANGE DISTANCE ------------------------->
 
 @app.route('/exchange/exchange_distance', methods=['GET', 'POST'])
 def exchange_distance():
@@ -196,11 +185,7 @@ def exchange_distance():
 
 
 
-
-###############################################################
-
-
-#---------------------------LOGIN/REGISTER HANDLERS------------------------------------------#
+#--------------------------- LOGIN/REGISTER HANDLERS ------------------------------------------#
 
 # LOGIN
 @app.route('/login', methods=['GET', 'POST'])
@@ -270,7 +255,7 @@ def handle_register():
 
             # Geocoding an address
             geocode_result = gmaps.geocode(full_address)
-# print (geocode_result[0]["geometry"]["location"])
+            # print (geocode_result[0]["geometry"]["location"])
             lat = geocode_result[0]["geometry"]["location"]["lat"]
             lng = geocode_result[0]["geometry"]["location"]["lng"]
 
@@ -285,7 +270,6 @@ def handle_register():
             return redirect(f'/user')
 
 # LOGOUT PAGE
-
 @app.route('/logout')
 def handle_logout():
     """Logs player out"""
@@ -295,7 +279,7 @@ def handle_logout():
 
     flash(f"You've successfully logged out.")
     return redirect('/login')
-#---------------------------------NEW BELOW (MISC) ------------------------------------------#
+
 
 
 #-------------------------END--------------------------------#
