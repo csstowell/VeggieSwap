@@ -11,27 +11,31 @@
     
 
     {% for user_produce in user_produce %}
-
+<div class="card-deck">
     <div class="card border-dark mb-3" style="width: 18rem;">
         <img class="card-img-top" src="/static/img/veggies/{{ user_produce.produce.name }}.jpeg" alt="Card image cap">
         <div class="card-body">
-        <h4 class="card-title"> {{ user_produce.produce.name }} </h4>
+            <h4 class="card-title"> {{ user_produce.produce.name }} </h4>
 
-        <ul class="list-group list-group-flush">
-            <li class="list-group-item">Quantity: {{ user_produce.quantity }}</li>
-            <li class="list-group-item">Notes: {{ user_produce.condition }}</li>
-        </ul>
-
-        <form action="{{ url_for('delete_user_produce', id=user_produce.id) }}" method="post" >
-            <input type="submit" class="btn btn-primary" value="Delete" onclick="return confirm('Are You Sure To Delete ?')" />
-
-
-        <a href="/user/exchange/{{user_produce.id}}" class="btn btn-warning btn-xs" data-toggle="modal"
-        data-target="#modaledit{{user_produce.id}}">Exchange</a>
-    </form>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item">Quantity: {{ user_produce.quantity }}</li>
+                <li class="list-group-item">Notes: {{ user_produce.condition }}</li>
+            </ul>
         </div>
+    <div class="card-footer">
+        <section>
+            <form action="{{ url_for('delete_user_produce', id=user_produce.id) }}" method="post" >
+                <input type="submit" class="btn btn-primary" value="Delete" onclick="return confirm('Are You Sure To Delete ?')" />
+                <a href="/user/exchange/{{user_produce.id}}" class="btn btn-warning btn-xs" data-toggle="modal" data-target="#modaledit{{user_produce.id}}">Exchange</a>
+            </form>
+        </section>
+        <br>
+        <small class="text-muted">Last updated 3 mins ago</small>
+        
     </div>
-    {% endfor %}
+    </div>
+{% endfor %}
+</div>
 <!--------  USER'S PRODUCE/ GARDEN ------------------>
 
 
