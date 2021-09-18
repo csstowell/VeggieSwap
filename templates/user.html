@@ -8,9 +8,11 @@
     <a class="modal-open" id="produce-search" data-toggle="modal" data-target="#produce-search" href="/produce">
         + ADD NEW PRODUCE
     </a>
+    
 
-    {% for user_produce in user_produce %}  
-    <div class="card" style="width: 18rem;">
+    {% for user_produce in user_produce %}
+
+    <div class="card border-dark mb-3" style="width: 18rem;">
         <img class="card-img-top" src="/static/img/veggies/{{ user_produce.produce.name }}.jpeg" alt="Card image cap">
         <div class="card-body">
         <h4 class="card-title"> {{ user_produce.produce.name }} </h4>
