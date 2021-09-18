@@ -130,11 +130,6 @@ class ExchangeProduce(db.Model):
             f"userproduce_id={self.userproduce_id} userProduce={self.userProduce} username={self.userProduce.user.username}  userconsumer_id={self.userconsumer_id}>"
             
     
-    
-    
-    
-    
-
 
 #-------------------------END--------------------------------#
 if __name__ == "__main__":

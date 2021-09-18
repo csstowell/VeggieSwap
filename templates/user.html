@@ -4,72 +4,46 @@
 {% endblock %}
 
 {% block body %}
-<h1>{{ session['current_user'] }}'s garden:</h1>
+    <h1>{{ session['current_user'] }}'s garden:</h1>
+    <a class="modal-open" id="produce-search" data-toggle="modal" data-target="#produce-search" href="/produce">
+        + ADD NEW PRODUCE
+    </a>
 
+    {% for user_produce in user_produce %}  
+    <div class="card" style="width: 18rem;">
+        <img class="card-img-top" src="/static/img/veggies/{{ user_produce.produce.name }}.jpeg" alt="Card image cap">
+        <div class="card-body">
+        <h4 class="card-title"> {{ user_produce.produce.name }} </h4>
+
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item">Quantity: {{ user_produce.quantity }}</li>
+            <li class="list-group-item">Notes: {{ user_produce.condition }}</li>
+        </ul>
+
+        <form action="{{ url_for('delete_user_produce', id=user_produce.id) }}" method="post" >
+            <input type="submit" class="btn btn-primary" value="Delete" onclick="return confirm('Are You Sure To Delete ?')" />
+
+
+        <a href="/user/exchange/{{user_produce.id}}" class="btn btn-warning btn-xs" data-toggle="modal"
+        data-target="#modaledit{{user_produce.id}}">Exchange</a>
+    </form>
+        </div>
+    </div>
+    {% endfor %}
 <!--------  USER'S PRODUCE/ GARDEN ------------------>
 
 
-<table class="table table-hover">
-    <thead>
-        <tr>
-            <!-- <th scope="col">Produce</th> -->
-            <th scope="col"> Produce</th>
-            <th scope="col">Options</th>
-        </tr>
-    </thead>
-    <tbody>
 
 
         <!-- Your rows inside the table HERE: -->
         {% for user_produce in user_produce %}        
-        <tr>
-            <td>
-                <!-- Card header -->
-                <div class="card-header" role="tab" id="headingOne1">
-                    <a data-toggle="collapse" data-parent="#accordionEx"
-                        href="#collapseOne1" aria-expanded="true"
-                        aria-controls="collapseOne1">
-                        <h5 class="mb-0">
-                            {{ user_produce.produce.name }} <i
-                                class="fas fa-angle-down rotate-icon"></i>
-                        </h5>
-                    </a>
-                    <div id="collapseOne1" class="collapse show" role="tabpanel"
-                    aria-labelledby="headingOne1" data-parent="#accordionEx">
-                    <div class="card-body">
-                        <div class="card" style="width: 18rem;">
-                            <ul class="list-group list-group-flush">
-                                <li class="list-group-item">Quantity: {{ user_produce.quantity }}</li>
-                                <li class="list-group-item">Notes: {{ user_produce.condition }}</li>
-                            </ul>
-                    </div>               
-                </td>
-            <td>
-                <a href="/user/exchange/{{user_produce.id}}" class="btn btn-warning btn-xs" data-toggle="modal"
-                data-target="#modaledit{{user_produce.id}}">Exchange</a>
-                <form action="{{ url_for('delete_user_produce', id=user_produce.id) }}" method="post">
-                    <input type="submit" value="Delete" onclick="return confirm('Are You Sure To Delete ?')" />
-                </form>
-
-            </td>
-
-            <!--Accordion wrapper-->
-            <div class="accordion md-accordion" id="accordionEx" role="tablist"
-            aria-multiselectable="true">
-
-            <!-- Accordion card -->
-
-                    </div>
-                </div>
-            </div>
-            <!-- Accordion card (end)-->
 
                 <!--------------------------- Modal Edit Produce ---------------------->
                 <div id="modaledit{{user_produce.id}}" class="modal fade" role="dialog">
                     <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h4 class="modal-title">Add To Exchange</h4>
+                                <h4 class="modal-title">Add to exchange</h4>
                             </div>
                             <div class="modal-body">
                                 <form action="{{ url_for('add_exchange_produce', id=user_produce.id) }}" method="POST">
@@ -77,38 +51,26 @@
                                     <div class="form-group">
                                     </div>
                                     <div class="form-group">
-                                        <label for="amount">Amount:</label>
-                                        <input type="amount" id="amount" name="amount" value="{{amount}}" required>
+                                        <label for="amount">Amount: </label>
+                                        <input type="number" id="amount" name="amount" value="{{amount}}" required>
                                     </div>
                                     <div class="form-group">
-                                        <label for="comment">Comment (optional):</label>
+                                        <label for="comment">Comment: </label>
                                         <input type="text" id="comment" name="comment" value="{{comment}}" >
                                     </div>
                                     <div class="form-group">
-
-                                        <button class="btn btn-primary" type="submit">List</button>
-
+                                        <label for="state"> Share contact info</label>
+                                        <input type="checkbox" id="state" name="state" value="ContactInfo">
+                                        <br><br>
                                     </div>
-
-
                                 </form>
-
-
                             </div>
-
-
+                            
                             <div class="modal-footer">
-
-
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-
-
+                                <button class="btn btn-primary" type="submit">Swap</button>
                             </div>
-
-
                         </div>
-
-
                     </div>
 
                 </div>
@@ -118,7 +80,6 @@
 
 
 <!---------------END OF MODALS ------------------------>
-
 
 
 </div>

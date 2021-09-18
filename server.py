@@ -52,8 +52,9 @@ def produce_page():
 # SEARCH PRODUCE RESULTS
 @app.route('/results')
 def search_results(search):
+    """return list of search results"""
+    
     results = []
-
     form = ProduceSearchForm(request.form)
     search_string = form.data['search']
 
@@ -99,7 +100,7 @@ def show_produce(produce_id):
 # ADD USER PRODUCE
 @app.route('/add_user_produce/<int:produce_id>', methods=['POST', 'GET'])
 def add_user_produce(produce_id):
-    '''add user produce to user_page'''
+    """add user produce to user_page"""
 
     if request.method == 'POST':
         user_id = session['current_user_id']
@@ -159,18 +160,18 @@ def add_exchange_produce(id):
             comment = request.form['comment']
             amount = int(request.form['amount'])
 
-            
+            # create new user exchange produce & add to db
             exchange_items = crud.add_exchange_produce(userproduce_id, amount, comment)
             
             current_quantity = session['quantity']
             new_produce_amount = (current_quantity - amount)
             
+            # update user produce to reflect exchange
             crud.update_user_produce_quantity(userproduce_id, new_produce_amount)
             
             print('QUANTITY IS CURRENTLY:', current_quantity)
             print('UPDATED USER PRODUCE???', new_produce_amount)
-            # QUANTITY IS CURRENTLY: 9
-            # UPDATED USER PRODUCE??? 2
+
             db.session.commit()
         flash('Added to the exchange!')
 
@@ -202,16 +203,6 @@ def exchange():
     #exchange_items = ExchangeProduce.query.all()
 
     return render_template('exchange.html', exchange_items=exchange_items, zipcode=zipcode)
-
-
-
-
-# # DELETE EXCHANGE 
-
-
-
-
-
 
 
 

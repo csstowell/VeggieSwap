@@ -155,7 +155,7 @@ def user_exchange_exists(userproduce_id):
 
 # CREATE EXCHANGE PRODUCE
 def add_exchange_produce(userproduce_id, amount, comment, userconsumer_id=None, state=None, date=None):
-    """Creates & adds a new user exchange produce """
+    """Creates a new user exchange produce & adds to the db"""
     exchange_items = ExchangeProduce(
         userproduce_id=userproduce_id, userconsumer_id=userconsumer_id, amount=amount, comment=comment, date=date, state=state)
 
