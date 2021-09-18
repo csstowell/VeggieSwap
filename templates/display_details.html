@@ -5,40 +5,80 @@
 <h2>{{ display_produce.name }}</h2>
 
 <div class="row">
-
     <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">
         <img src="/static/img/veggies/{{ display_produce.name }}.jpeg" class="img-responsive">
     </div>
 
     <div class="col-xs-8 col-sm-6 col-md-4 col-lg-3">
         <div class="well">
-            <form action="/add_user_produce/{{ display_produce.id }}" method="post">
-                <h3>Produce Nutrient</h3>
-                <p> {{ display_produce.nutrient }} </p>
-                <label for="condition">Select condition:</label>
-                <select id="condition" name="condition" required>
-                    <option value="ripe">Ripe</option>
-                    <option value="fresh">Fresh</option>
-                    <option value="overripe">Overripe</option>
-                </select>
-                <label for="quantity">Enter Quantity:</label>
-                <input type="quantity" id="quantity" name="quantity" required />
-                <button type="submit" href="/add_user_produce/{{ display_produce.id }}">Add</button><br>
-                <br>
-            </form>
+
         </div>
     </div>
 </div>
+<!------------------------------------------------  MODAL ADD  ------------------------------------>
+<button type="button" class="btn btn-primary" data-toggle="modal"
+data-target="#modalQuickView">Add To Garden</button>
 
+
+
+<!-- Modal: modalQuickView -->
+<div class="modal fade" id="modalQuickView" tabindex="-1" role="dialog"
+aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-lg-5">
+
+                    <!--/.Carousel Wrapper-->
+                </div>
+                <div class="col-lg-7">
+                    <h2 class="h2-responsive product-name">
+                        <strong>Add {{display_produce.name}}</strong>
+                    </h2>
+                    <!-- Add to Cart -->
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <form action="/add_user_produce/{{ display_produce.id }}" method="post">
+                                    <label for="quantity">*Quantity:</label>
+                                    <input type="quantity" id="quantity" name="quantity" required />                                   
+                                    <label for="condition">Notes:</label>
+                                    <input type="text" id="condition" name="condition"/>
+                            </div>
+                        </div>
+                    </div>
+                            <div class="text-center">
+                                <button class="btn btn-primary" type="submit" href="/add_user_produce/{{ display_produce.id }}">Update garden
+                                    <i class="fas fa-cart-plus ml-2" aria-hidden="true"></i>
+                                </button>
+                            </div>
+                                </form>
+                    <!-- /.Add to Cart -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+<!------------------------------------------------  MODAL END  ------------------------------------>
 <div class="produce-details">
-
-    <h3>Produce details</h3>
+    <h5>Select:</h5>
     <ul>
-        <li>Name: {{ display_produce.name }}</li>
-        <li>Store: {{ display_produce.store }}</li>
-        <li>Variety: {{ display_produce.variety }}</li>
-        <li>Handpick: {{ display_produce.handpick }}</li>
+        <li>{{ display_produce.handpick }}</li>
     </ul>
+
+    <h5>Variety:</h5>
+    <ul>
+        <li>{{ display_produce.variety }}</li>
+    </ul>
+
+    <h5>Store:</h5>
+    <ul>
+        <li>{{ display_produce.store }}</li>
+    </ul>
+
 </div>
 
 {% endblock %}

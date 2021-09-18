@@ -9,61 +9,64 @@ Marketplace
 
 <!------------------- MAP ------------------->
 <script>
-  /*
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(showPosition);
-    } else { 
-      map.innerHTML = "Geolocation is not supported by this browser.";
-    }
-  
-  
-  function showPosition(position) {
-      map.innerHTML = "Latitude: " + position.coords.latitude + 
-    "<br>Longitude: " + position.coords.longitude;
-  }
-  */
+
+
   function initMap() {
-    // The location of SF
-    const sf = { lat: 37.753506, lng: -122.433315 };
-    // The map, centered at SF
-    const map = new google.maps.Map(document.getElementById("map"), {
-      zoom: 12,
-      center: sf,
-    });
     let lat = 0;
     let lng = 0;
-    console.log('HERE #####: item')
+    var zipCode = '{{ zipcode }}';
+    const geocoder = new google.maps.Geocoder();
 
-    lat = 0; //exchange_items.user.lat
-    lng = 0; //exchange_items.user.lng
-    if (lat != 'None') {
-      const coord = {
-        lat: lat,
-        lng: lng
+    geocoder.geocode({ 'address': zipCode }, (results, status) => {
+      if (status == 'OK') {
+        // Create the map and center on the zipcode location
+        const map = new google.maps.Map(document.getElementById("map"), {
+          zoom: 12,
+          center: results[0].geometry.location,
+        });
+
+        // Place a marker on the center
+        var marker = new google.maps.Marker({
+          map: map,
+          position: results[0].geometry.location,
+          icon: {
+            url: "http://maps.google.com/mapfiles/ms/icons/blue-dot.png"
+          }
+        });
+
+        // Add circle overlay and bind to marker
+        var circle = new google.maps.Circle({
+          map: map,
+          radius: 1609,    // 1 miles in metres
+          fillColor: 'green',
+          fillOpacity: 0.15
+        });
+        circle.bindTo('center', marker, 'position');
+
+        {% for item in exchange_items %}
+        if ({{item.userProduce.user.lat}} != 'None') {
+          const coord = {
+            lat: {{item.userProduce.user.lat}},
+            lng: {{item.userProduce.user.lng}}
+          }
+          new google.maps.Marker({
+            position: coord,
+            label: '{{item.userProduce.user.username}}',
+            title: 'title',
+            icon: {
+              url: "http://maps.google.com/mapfiles/kml/shapes/parks.png"
+            },
+            map: map
+          });
+
+        }
+        {% endfor %}
+
+      } else {
+        alert('Geocode was not successful for the following reason: ' + status);
       }
-      new google.maps.Marker({
-        position: coord,
-        label: 'exchange_items.user.username',
-        title: 'title',
-        map: map
-      });
-
-    }
-
-    // The marker, positioned at SF
-    const marker = new google.maps.Marker({
-      position: sf,
-      map: map,
     });
 
-    // Add circle overlay and bind to marker
-    var circle = new google.maps.Circle({
-      map: map,
-      radius: 1609,    // 1 miles in metres
-      fillColor: 'green',
-      fillOpacity: 0.15
-    });
-    circle.bindTo('center', marker, 'position');
   }
 </script>
 
@@ -74,17 +77,17 @@ Marketplace
     <form method="get">
       <label for="distance">Select distance:</label>
       <select class="btn btn-secondary " id="distance" name="distance" required>
-          <option value="0.5">0.5 miles</option>
-          <option value="1">1.0 miles</option>
-          <option value="1.5">1.5 miles</option>
-          <option value="2.0">2.0 miles</option>
-          <option value="3.0">3.0 miles</option>
+        <option value="0.5">0.5 miles</option>
+        <option value="1">1.0 miles</option>
+        <option value="1.5">1.5 miles</option>
+        <option value="2.0">2.0 miles</option>
+        <option value="3.0">3.0 miles</option>
       </select>
       <button class="btn btn-secondary searchButton" type="submit" href="/exchange/">Search</button>
       {% endblock%}
   </div>
 
-<!------------------- EXCHANGES (produceEntry.html) -------------------------->
+  <!------------------- EXCHANGES (produceEntry.html) -------------------------->
   <div class="row align-items-start">
     <div class="col-8">
       <div style="height: 100vh; width: 100%;">

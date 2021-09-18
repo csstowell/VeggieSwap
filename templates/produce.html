@@ -1,0 +1,64 @@
+{% extends 'base.html' %} {% block title %} Produce {% endblock %} 
+    <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $("#myInput").on("keyup", function () {
+                var value = $(this).val().toLowerCase();
+                $("#myDIV *").filter(function () {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                });
+            });
+        });
+    </script> -->
+
+{% block body %}
+<section id="produce-search">
+    <form method="post">
+        {% with messages = get_flashed_messages() %} {% if messages %}
+            <ul class="flashes">
+                {% for message in messages %}
+                    <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+            {% endif %} {% endwith %} 
+        {% from "_formhelpers.html" import render_field %}
+        <dl>
+            <p>{{ render_field(form.search) }}</p>
+        </dl>
+        <p><input class="searchButton" type="submit" value="Search"></p>
+
+    </form>
+</section>
+
+<!----------------------- PRODUCE TABLE ------------------>
+<section>
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <!-- Produce Columns HERE -->
+                <th scope="col">Name</th>
+                <th scope="col">Store</th>
+                <th scope="col">Variety</th>
+                <th scope="col">Options</th>
+            </tr>
+        </thead>
+        <tbody id="produce-results">
+            <!-- Your rows inside the table HERE: -->
+            {% for item in items %}
+            <tr>
+                <td>{{ item.name }}</td>
+                <td>{{ item.nutrient }}</td>
+                <td>{{ item.store }}</td>
+                <td>{{ item.variety }}</td>
+                <td>
+                    <a class="btn btn-primary" href="/produce/{{ item.id }}">Details</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    </div class="loader">
+    </body>
+
+    </html>
+{% endblock %}

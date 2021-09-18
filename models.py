@@ -60,7 +60,7 @@ class Produce(db.Model):
     def __repr__(self):
         """Show human-readable info about vegetable"""
 
-        return f"<Produce id={self.id} name={self.name}>"
+        return f"<Produce id={self.id} name={self.name} variety={self.variety}>"
 
 
 
@@ -119,13 +119,9 @@ class ExchangeProduce(db.Model):
     comment = db.Column(db.String)
     date = db.Column(db.Date, nullable=True)
     state = db.Column(db.String)
-    # offered_produce_id 
-    # user1 --- adds to profile --- possibly approve exchange/ boolean 
-    # vs user2 --- comes profile & clicks exchange
 
-    #user_exchange_produce = db.relationship('UserProduce', backref="exchange_produce")
     #X = db.relationship('UserProduce', secondary='join(ExchangeProduce, UserProduce, ExchangeProduce.userproduce_id == UserProduce.id)', uselist=False, viewonly=True, backref='exchange_produce', sync_backref=False)
-    userProduce = db.relationship('UserProduce')
+    userProduce = db.relationship('UserProduce',  backref="exchange_produce")
     produce = db.relationship('Produce', secondary='join(UserProduce, Produce, UserProduce.produce_id == Produce.id)', uselist=False, viewonly=True, backref='exchange_produce', sync_backref=False)
 
     def __repr__(self):
