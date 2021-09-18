@@ -1,8 +1,8 @@
-from flask import (Flask, render_template, request, flash,
-                session, redirect, jsonify, url_for)
-from models import Produce, User, UserProduce, ExchangeProduce, db, connect_to_db
 import crud
 import googlemaps
+import math
+from flask import (Flask, render_template, request, flash, session, redirect, jsonify, url_for)
+from models import Produce, User, UserProduce, ExchangeProduce, db, connect_to_db
 from forms import ProduceSearchForm
 from db_setup import init_db, db_session
 from sqlalchemy import func
@@ -14,6 +14,28 @@ init_db()
 
 app = Flask(__name__)
 app.secret_key = "SECRET"
+
+##############  TWILIO  #############
+import os
+from flask import Flask, render_template, request, redirect, url_for, flash
+from flask_mail import Mail, Message
+
+app = Flask(__name__)
+app.config['SECRET_KEY'] = 'top-secret!'
+app.config['MAIL_SERVER'] = 'smtp.sendgrid.net'
+app.config['MAIL_PORT'] = 587
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USERNAME'] = 'apikey'
+app.config['MAIL_PASSWORD'] = os.environ.get('SENDGRID_API_KEY')
+app.config['MAIL_DEFAULT_SENDER'] = os.environ.get('MAIL_DEFAULT_SENDER')
+mail = Mail(app)
+
+##############  TWILIO  #############
+
+
+
+
+
 # ---------------------------------------------------------
 
 # INDEX
@@ -143,7 +165,7 @@ def delete_user_produce(id):
     return redirect('/user')
 
 
-# ADD EXCHANGE PRODUCE & UPDATEEEE
+# ADD EXCHANGE PRODUCE & UPDATE
 @app.route('/user/exchange/<int:id>', methods=['GET', 'POST'])
 def add_exchange_produce(id):
     """Adds vegetable from user's produce to the exchange"""
@@ -185,9 +207,14 @@ def exchange():
     """Show exchange page"""
 
     radius_in_miles = request.args.get('distance')
+    # radius_in_miles = int(radius_in_miles)
     if (radius_in_miles == None):
         radius_in_miles = 3
-        
+    
+    # we are passing in 'miles', need to convert to meters
+    METERS_IN_MILE = 1609.34
+    radius = radius_in_miles * METERS_IN_MILE
+    
     zipcode = request.args.get('zipcode')
 
     # get user session-- check if logged in -- save zipcode
@@ -198,11 +225,39 @@ def exchange():
     geocode_result = gmaps.geocode(zipcode)
     center_lat = geocode_result[0]['geometry']['location']['lat']
     center_lng = geocode_result[0]['geometry']['location']['lng']
-    exchange_items = crud.get_exchange_by_distance(center_lat, center_lng, radius_in_miles)
+    exchange_items = crud.get_exchange_by_distance(center_lat, center_lng, radius)
     
     #exchange_items = ExchangeProduce.query.all()
 
-    return render_template('exchange.html', exchange_items=exchange_items, zipcode=zipcode)
+    return render_template('exchange.html', exchange_items=exchange_items, zipcode=zipcode, radius=radius  )
+
+
+
+# TWILIO SENDGRID API
+@app.route('/exchange/contact', methods=['GET', 'POST'])
+def email_user(id):
+    """Sends email to user using Twilio SendGrid API"""
+    if request.method == 'POST':
+        recipient = request.form['recipient']
+        msg = Message('Twilio SendGrid Test Email', recipients=[recipient])
+        msg.body = ('Congratulations! You have sent a test email with '
+                    'Twilio SendGrid!')
+        msg.html = ('<h1>Twilio SendGrid Test Email</h1>'
+                    '<p>Congratulations! You have sent a test email with '
+                    '<b>Twilio SendGrid</b>!</p>')
+        mail.send(msg)
+        flash(f'A test message was sent to {recipient}.')
+        return redirect(url_for('exchange'))
+    return render_template('exchange.html')
+
+
+
+
+
+
+
+
+
 
 
 

@@ -23,12 +23,10 @@
             </ul> 
         </div>
     <div class="card-footer">
-        <section>
-            <form action="{{ url_for('delete_user_produce', id=user_produce.id) }}" method="post" >
-                <input type="submit" class="btn btn-primary" value="Delete" onclick="return confirm('Are You Sure To Delete ?')" />
-                <a href="/user/exchange/{{user_produce.id}}" class="btn btn-warning btn-xs" data-toggle="modal" data-target="#modaledit{{user_produce.id}}">Exchange</a>
-            </form>
-        </section>
+        <a href="/user/exchange/{{user_produce.id}}" class="btn btn-warning btn-xs" data-toggle="modal" data-target="#modaledit{{user_produce.id}}">Exchange</a>
+        <form action="{{ url_for('delete_user_produce', id=user_produce.id) }}" method="post" >
+            <input type="submit" class="btn btn-primary" value="Delete" onclick="return confirm('Are You Sure To Delete ?')" />
+        </form>
         <br>
         <small class="text-muted">Last updated 3 mins ago</small>
         
@@ -46,14 +44,13 @@
 
                 <!--------------------------- Modal Edit Produce ---------------------->
                 <div id="modaledit{{user_produce.id}}" class="modal fade" role="dialog">
+                    <form action="{{ url_for('add_exchange_produce', id=user_produce.id) }}" method="post">
                     <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-header">
                                 <h4 class="modal-title">Add to exchange</h4>
                             </div>
                             <div class="modal-body">
-                                <form action="{{ url_for('add_exchange_produce', id=user_produce.id) }}" method="POST">
-                                    
                                     <div class="form-group">
                                     </div>
                                     <div class="form-group">
@@ -69,14 +66,27 @@
                                         <input type="checkbox" id="state" name="state" value="ContactInfo">
                                         <br><br>
                                     </div>
+                            </div>
+                            <!-- <a href="/user/exchange/{{user_produce.id}}" class="btn btn-warning btn-xs" data-toggle="modal" data-target="#modaledit{{user_produce.id}}">Exchange</a> -->
+<!--
+                            <section>
+                                <a href="/user/exchange/{{user_produce.id}}" class="btn btn-warning btn-xs" data-toggle="modal" data-target="#modaledit{{user_produce.id}}">Exchange</a>
+                                <form action="{{ url_for('delete_user_produce', id=user_produce.id) }}" method="post" >
+                                    <input type="submit" class="btn btn-primary" value="Delete" onclick="return confirm('Are You Sure To Delete ?')" />
                                 </form>
-                            </div>
-                            
+                            </section>
+-->
+
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                <button class="btn btn-primary" type="submit">Swap</button>
-                            </div>
+
+                                    <input class="btn" id="exchange_produce" name="exchange_produce" />
+                                    
+                                    <input type="submit" value="Exchange" />
+
+                            </div> 
+
                         </div>
+                    </form> 
                     </div>
 
                 </div>

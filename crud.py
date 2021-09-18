@@ -172,17 +172,11 @@ def add_exchange_produce(userproduce_id, amount, comment, userconsumer_id=None, 
 
 
 
-def get_exchange_by_distance(center_lat, center_lng, radius_miles):
-    """Returns exchanges within the specified radius"""
+def get_exchange_by_distance(center_lat, center_lng, radius):
+    """Returns exchanges within the specified radius (in meters) """
     R = 6371e3; # earth's mean radius in metres
     π = math.pi;
     
-    # we are passing in 'miles', need to convert to meters
-    METERS_IN_MILE = 1609.34
-    radius = radius_miles * METERS_IN_MILE
-    
-
-
     minLat =  center_lat - radius/R*180/π,
     maxLat = center_lat + radius/R*180/π,
     minLng=  center_lng - radius/R*180/π / math.cos(center_lat*π/180),
@@ -197,8 +191,8 @@ def get_exchange_by_distance(center_lat, center_lng, radius_miles):
     exchangesWithinCircle = []
     # add in distance d = acos( sinφ₁⋅sinφ₂ + cosφ₁⋅cosφ₂⋅cosΔλ ) ⋅ R
     for exchange in exchangesBoundedBox:
-        distance = math.acos(math.sin(exchange.user.lat*π/180)*math.sin(center_lat*π/180) +
-            math.cos(exchange.user.lat*π/180)*math.cos(center_lat*π/180)*math.cos(exchange.user.Lng*π/180-center_lng*π/180)) * R 
+        distance = math.acos(math.sin(exchange.userProduce.user.lat*π/180)*math.sin(center_lat*π/180) +
+            math.cos(exchange.userProduce.user.lat*π/180)*math.cos(center_lat*π/180)*math.cos(exchange.userProduce.user.lng*π/180-center_lng*π/180)) * R 
         
         if (distance < radius):
             exchangesWithinCircle.append(exchange)
