@@ -39,18 +39,13 @@ app.secret_key = "SECRET"
 # @app.route('/')
 # def index():
 #     """View index page"""
-#     if 'current_user' not in session:
-#         return redirect('/login')
-#     else:
-#         username = session['current_user']
-#         return redirect(f'/home')
 #     return render_template('home.html')
 
 
 # HOMEPAGE
-@app.route('/home', methods=['GET', 'POST'])
+@app.route('/', methods=['GET', 'POST'])
 def home_page():
-    """Home Page"""
+    """Show home Page"""
 
     return render_template('home.html')
 
@@ -59,6 +54,13 @@ def home_page():
 @app.route('/produce', methods=['GET', 'POST'])
 def produce_page():
     """View all produce listings from database"""
+    if 'current_user' not in session:
+        return redirect('/login')
+    else:
+        username = session['current_user']
+        return redirect(f'/')
+
+
     search = ProduceSearchForm(request.form)
     if request.method == 'POST':
         return search_results(search)
@@ -234,6 +236,11 @@ def exchange():
 @app.route('/exchange/contact/<int:id>', methods=['GET', 'POST'])
 def email_exchange(id):
     """Sends email to user using Twilio SendGrid API"""
+    if 'current_user' not in session:
+        return redirect('/login')
+    else:
+        username = session['current_user']
+        return redirect(f'/home')
     if request.method == 'POST':
         # look up the user's email address by id
         user = crud.lookup_user_by_id(id)
@@ -343,8 +350,6 @@ def handle_register():
             return redirect(f'/user')
 
 # LOGOUT PAGE
-
-
 @app.route('/logout')
 def handle_logout():
     """Logs player out"""
@@ -362,9 +367,14 @@ API_KEY = '94016bc42734493084e87bba6984b963'
 ###################   SPOONACULAR API    ###################################
 
 
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/recipes', methods=['GET', 'POST'])
 def recipes():
     """Returns recipes based on ingredient"""
+    if 'current_user' not in session:
+        return redirect('/login')
+    else:
+        username = session['current_user']
+        return redirect(f'/home')
     if request.method == 'POST':
         content = requests.get(
             "https://api.spoonacular.com/recipes/findByIngredients?ingredients=" +
