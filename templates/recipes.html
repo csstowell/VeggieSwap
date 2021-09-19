@@ -1,4 +1,13 @@
-{% extends 'base.html' %} {% block body %}
+{% extends 'base.html' %} {% block head %}
+<style>
+    h1 {
+        color: blue;
+        font-family: Montserrat;
+        font-size: 300%;
+    }
+</style>
+
+
 
 <head>
     <!-- Latest compiled and minified CSS -->
@@ -12,11 +21,16 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 </head>
+{% endblock %} {% block body %}
+
+<h4>Enter produce here:</h4>
+<!-- <img src> -->
+
 
 <form method="POST">
     <div class='col-xs-12 col-sm-12 col-md-10 col-lg-10'>
         <div class='input-group'>
-            <input class='form-control' type='text' name='restaurant_name' placeholder='Enter ingredients separated by commas...' />
+            <input class='form-control' type='text' name='restaurant_name' placeholder='Enter produce separated by commas...' />
             <span class="input-group-btn">
                 <button type='submit' class='btn btn-default'>
                     <span class='glyphicon glyphicon-search'></span>
@@ -28,9 +42,43 @@
 </form>
 
 
+
+<style>
+    h3 {
+        font-family: 'Courier New', Courier, monospace;
+        font-weight: bold;
+    }
+    
+    h1 {
+        color: rgb(0, 0, 0);
+        font-family: Montserrat;
+        font-size: 300%;
+    }
+    
+    p {
+        font-family: 'Courier New', Courier, monospace;
+        font-weight: bold;
+    }
+    
+    h4 {
+        font-family: 'Courier New', Courier, monospace;
+    }
+    
+    body {
+        background-color: rgb(255, 255, 255);
+    }
+    
+    .input-group {
+        border: 2px solid black;
+    }
+</style>
+
+
+
 <div class='col-xs-12 col-sm-12 col-md-10 col-lg-10'>
+
     {% if response!=undefined and response|length > 0%}
-    <h2>Recipes using these ingredients</h2>
+    <h3>Recipes using these ingredients</h3>
     {% else %} {% if response!="No recipes found"%}
     <p>No recipes found</p>
     {% else %}
