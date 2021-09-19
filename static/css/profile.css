@@ -1,0 +1,34 @@
+h1 {
+    color: rgb(1, 1, 1);
+    font-family: Montserrat;
+    font-size: 300%;
+}
+
+h3 {
+    color: blue;
+    font-family: "Gill Sans", sans-serif;
+    font-size: 150%;
+}
+
+h4 {
+    font-family: Montserrat;
+    font-weight: 500;
+    font-weight: lighter;
+}
+
+ul {
+    position: relative;
+}
+
+li {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: larger;
+}
+
+#produce-search {
+    font-family: 'Courier New', Courier, monospace;
+}
+
+#produce-search {
+    font-family: 'Courier New', Courier, monospace;
+}

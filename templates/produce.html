@@ -1,5 +1,5 @@
-{% extends 'base.html' %} {% block title %} Produce {% endblock %} 
-    <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+{% extends 'base.html' %}
+<!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script>
         $(document).ready(function () {
             $("#myInput").on("keyup", function () {
@@ -10,18 +10,49 @@
             });
         });
     </script> -->
+{% block head %}
+<style>
+    h1 {
+        color: blue;
+        font-family: Montserrat;
+        font-size: 300%;
+    }
+</style>
+{% endblock %} {% block body %}
 
-{% block body %}
+<style>
+    p {
+        position: relative;
+        color: rgb(253, 89, 89);
+        font-family: courier;
+        font-size: 160%;
+    }
+    
+    thead {
+        font-family: courier;
+        position: relative;
+        font-size: 130%;
+    }
+    
+    tr {
+        border: 2px solid powderblue;
+        padding: 30px;
+    }
+</style>
+
+
+
+
+
 <section id="produce-search">
     <form method="post">
         {% with messages = get_flashed_messages() %} {% if messages %}
-            <ul class="flashes">
-                {% for message in messages %}
-                    <li>{{ message }}</li>
-                {% endfor %}
-            </ul>
-            {% endif %} {% endwith %} 
-        {% from "_formhelpers.html" import render_field %}
+        <ul class="flashes">
+            {% for message in messages %}
+            <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %} {% endwith %} {% from "_formhelpers.html" import render_field %}
         <dl>
             <p>{{ render_field(form.search) }}</p>
         </dl>
@@ -75,5 +106,5 @@
 
 
 
-    
-{% endblock %}
+
+    {% endblock %}
