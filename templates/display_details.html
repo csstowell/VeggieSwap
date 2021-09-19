@@ -1,6 +1,4 @@
-{% extends 'base.html' %}
-
-{% block body %}
+{% extends 'base.html' %} {% block body %}
 
 <h2>{{ display_produce.name }}</h2>
 
@@ -16,50 +14,48 @@
     </div>
 </div>
 <!------------------------------------------------  MODAL ADD  ------------------------------------>
-<button type="button" class="btn btn-primary" data-toggle="modal"
-data-target="#modalQuickView">Add To Garden</button>
+<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalQuickView">Add To Garden</button>
 
 
 
 <!-- Modal: modalQuickView -->
-<div class="modal fade" id="modalQuickView" tabindex="-1" role="dialog"
-aria-labelledby="exampleModalLabel" aria-hidden="true">
-<div class="modal-dialog modal-lg" role="document">
-    <div class="modal-content">
-        <div class="modal-body">
-            <div class="row">
-                <div class="col-lg-5">
+<div class="modal fade" id="modalQuickView" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-lg-5">
 
-                    <!--/.Carousel Wrapper-->
-                </div>
-                <div class="col-lg-7">
-                    <h2 class="h2-responsive product-name">
-                        <strong>Add {{display_produce.name}}</strong>
-                    </h2>
-                    <!-- Add to Cart -->
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <form action="/add_user_produce/{{ display_produce.id }}" method="post">
-                                    <label for="quantity">*Quantity:</label>
-                                    <input type="quantity" id="quantity" name="quantity" required />                                   
-                                    <label for="condition">Notes:</label>
-                                    <input type="text" id="condition" name="condition"/>
+                        <!--/.Carousel Wrapper-->
+                    </div>
+                    <div class="col-lg-7">
+                        <h2 class="h2-responsive product-name">
+                            <strong>Add {{display_produce.name}}</strong>
+                        </h2>
+                        <!-- Add to Cart -->
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <form action="/add_user_produce/{{ display_produce.id }}" method="post">
+                                        <label for="quantity">*Quantity:</label>
+                                        <input type="quantity" id="quantity" name="quantity" required />
+                                        <label for="condition">Notes:</label>
+                                        <input type="text" id="condition" name="condition" />
+                                </div>
                             </div>
                         </div>
-                    </div>
-                            <div class="text-center">
-                                <button class="btn btn-primary" type="submit" href="/add_user_produce/{{ display_produce.id }}">Update garden
+                        <div class="text-center">
+                            <button class="btn btn-primary" type="submit" href="/add_user_produce/{{ display_produce.id }}">Update garden
                                     <i class="fas fa-cart-plus ml-2" aria-hidden="true"></i>
                                 </button>
-                            </div>
-                                </form>
-                    <!-- /.Add to Cart -->
+                        </div>
+                        </form>
+                        <!-- /.Add to Cart -->
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 </div>
 
 <!------------------------------------------------  MODAL END  ------------------------------------>

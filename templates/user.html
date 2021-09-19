@@ -1,126 +1,88 @@
 {% extends 'base.html' %} {% block head %}
 
-<link rel="stylesheet" type="text/css" href="profile.css" />
+<link rel="stylesheet" type="text/css" href="/static/css/profile.css" /> {% endblock %} {% block body %}
 
 
 
-
-
-
-
-
-<style>
-    h1 {
-        color: rgb(1, 1, 1);
-        font-family: Montserrat;
-        font-size: 300%;
-    }
-    
-    h3 {
-        color: blue;
-        font-family: 'Courier New', Courier, monospace;
-        font-size: 150%;
-        position: relative;
-    }
-</style>
-{% endblock %} {% block body %}
-
-
-<!-- _______________________________________________________________ -->
-<style>
-    h4 {
-        font-family: Montserrat;
-        font-weight: 500;
-        font-weight: lighter;
-    }
-    
-    ul {
-        position: relative;
-    }
-    
-    li {
-        font-family: 'Courier New', Courier, monospace;
-        font-size: larger;
-    }
-</style>
-
-<!-- _______________________________________________________________ -->
 
 <h3>Your Garden:</h3>
-<a class="modal-open" id="produce-search" data-toggle="modal" a-target="#produce-search " href="/produce ">
-        + ADD NEW PRODUCE
-    </a> {% for user_produce in user_produce %}
-<div class="card-deck ">
-    <div class="card border-dark mb-3 " style="width: 18rem; ">
-        <img class="card-img-top " src="/static/img/veggies/{{ user_produce.produce.name }}.jpeg " alt="Card image cap ">
-        <div class="card-body ">
-            <h4 class="card-title "> {{ user_produce.produce.name }}</h4>
+<a class="modal-open" id="produce-search" href="/produce">
+    + ADD NEW PRODUCE
+</a>
 
-            <ul class="list-group list-group-flush ">
-                <li class="list-group-item ">Quantity: {{ user_produce.quantity }}</li>
-                <li class="list-group-item ">Notes: {{ user_produce.condition }}</li>
-            </ul>
-        </div>
-        <div class="card-footer ">
-            <a href="/user/exchange/{{user_produce.id}} " class="btn btn-warning btn-xs " data-toggle="modal " data-target="#modaledit{{user_produce.id}} ">Exchange</a>
-            <form action="{{ url_for( 'delete_user_produce', id=user_produce.id) }} " method="post ">
-                <input type="submit " class="btn btn-primary " value="Delete " onclick="return confirm( 'Are You Sure To Delete ?') " />
-            </form>
-            <br>
-            <small class="text-muted ">Last updated 3 mins ago</small>
+<div class="container">
+    <div class="card-columns">
+        {% for user_produce in user_produce %}
 
+
+        <div class="card border-dark mb-3" style="width:250px">
+            <img class="card-img-top" src="/static/img/veggies/{{ user_produce.produce.name }}.jpeg" alt="Card image" style="width:100%">
+            <div class="card-body">
+                <h4 class="card-title">{{ user_produce.produce.name }}</h4>
+                <p class="card-text">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">Quantity: {{ user_produce.quantity }}</li>
+                        <li class="list-group-item">Notes:
+                            <textarea class="profile-produce-comments" readonly>
+                                {{ user_produce.condition }}
+                            </textarea>
+                        </li>
+                    </ul>
+                </p>
+            </div>
+            <div class="card-footer">
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exchange-dialog{{user_produce.id}}">Exchange</button>
+
+                <form action="{{ url_for( 'delete_user_produce', id=user_produce.id) }}" method="post">
+                    <input type="submit" class="btn btn-primary" value="Delete" onclick="return confirm( 'Are You Sure To Delete ?')" />
+                </form>
+                <small class="text-muted">Last updated 3 mins ago</small>
+
+            </div>
         </div>
+
+        {% endfor %}
     </div>
-    {% endfor %}
 </div>
 <!--------  USER'S PRODUCE/ GARDEN ------------------>
-
-
 
 
 <!-- Your rows inside the table HERE: -->
 {% for user_produce in user_produce %}
 
 <!--------------------------- Modal Edit Produce ---------------------->
-<div id="modaledit{{user_produce.id}} " class="modal fade " role="dialog ">
-    <form action="{{ url_for( 'add_exchange_produce', id=user_produce.id) }} " method="post ">
-        <div class="modal-dialog ">
-            <div class="modal-content ">
-                <div class="modal-header ">
-                    <h4 class="modal-title ">Add to exchange</h4>
+<div id="exchange-dialog{{user_produce.id}}" class="modal fade" role="dialog">
+    <form action="{{ url_for( 'add_exchange_produce', id=user_produce.id) }}" method="post">
+
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Add to exchange</h4>
                 </div>
-                <div class="modal-body ">
-                    <div class="form-group ">
+                <div class="modal-body">
+                    <div class="form-group">
                     </div>
-                    <div class="form-group ">
-                        <label for="amount ">Amount: </label>
-                        <input type="number " id="amount " name="amount " value="{{amount}} " required>
+                    <div class="form-group">
+                        <label for="amount">Amount: </label>
+                        <input type="number" id="amount" name="amount" value="{{amount}}" required>
                     </div>
-                    <div class="form-group ">
-                        <label for="comment ">Comment: </label>
-                        <input type="text " id="comment " name="comment " value="{{comment}} ">
+                    <div class="form-group">
+                        <label for="comment">Comment: </label>
+                        <input type="text" id="comment" name="comment" value="{{comment}}">
                     </div>
-                    <div class="form-group ">
-                        <label for="state "> Share contact info</label>
-                        <input type="checkbox " id="state " name="state " value="ContactInfo ">
+                    <div class="form-group">
+                        <label for="state"> Share contact info</label>
+                        <input type="checkbox" id="state" name="state" value="ContactInfo">
                         <br><br>
                     </div>
                 </div>
-                <!-- <a href="/user/exchange/{{user_produce.id}} " class="btn btn-warning btn-xs " data-toggle="modal " data-target="#modaledit{{user_produce.id}} ">Exchange</a> -->
-                <!--
-                            <section>
-                                <a href="/user/exchange/{{user_produce.id}} " class="btn btn-warning btn-xs " data-toggle="modal " data-target="#modaledit{{user_produce.id}} ">Exchange</a>
-                                <form action="{{ url_for( 'delete_user_produce', id=user_produce.id) }} " method="post " >
-                                    <input type="submit " class="btn btn-primary " value="Delete " onclick="return confirm( 'Are You Sure To Delete ?') " />
-                                </form>
-                            </section>
--->
 
-                <div class="modal-footer ">
 
-                    <input class="btn " id="exchange_produce " name="exchange_produce " />
+                <div class="modal-footer">
 
-                    <input type="submit " value="Exchange " />
+                    <input class="btn" id="exchange_produce" name="exchange_produce" />
+
+                    <input type="submit" value="Exchange" />
 
                 </div>
 
@@ -146,3 +108,18 @@
 
 </div>
 {% endblock %}
+
+
+<!-- <form action="{{ url_for( 'add_exchange_produce', id=user_produce.id) }}" method="post">
+    <a href="/user/exchange/{{user_produce.id}}" class="btn btn-warning btn-xs" data-toggle="modal" data-target="#modaledit{{user_produce.id}}">Exchange</a> -->
+
+
+<!-- <a href="/user/exchange/{{user_produce.id}}" class="btn btn-warning btn-xs" data-toggle="modal" data-target="#modaledit{{user_produce.id}}">Exchange</a> -->
+<!--
+                            <section>
+                                <a href="/user/exchange/{{user_produce.id}}" class="btn btn-warning btn-xs" data-toggle="modal" data-target="#modaledit{{user_produce.id}}">Exchange</a>
+                <form action="{{ url_for( 'delete_user_produce', id=user_produce.id) }}" method="post">
+                    <input type="submit" class="btn btn-primary" value="Delete" onclick="return confirm( 'Are You Sure To Delete ?')" />
+                </form>
+                </section>
+                -->
