@@ -6,8 +6,8 @@ from models import Produce, User, UserProduce, ExchangeProduce, db, connect_to_d
 from forms import ProduceSearchForm
 from db_setup import init_db, db_session
 from sqlalchemy import func
-
-
+import requests
+import simplejson as json
 
 init_db()
 
@@ -27,27 +27,24 @@ app.config['MAIL_PORT'] = 587
 app.config['MAIL_USE_TLS'] = True
 app.config['MAIL_USERNAME'] = 'apikey'
 app.config['MAIL_PASSWORD'] = os.environ.get('SENDGRID_API_KEY')
-app.config['MAIL_DEFAULT_SENDER'] = os.environ.get('MAIL_DEFAULT_SENDER')
+#app.config['MAIL_DEFAULT_SENDER'] = os.environ.get('MAIL_DEFAULT_SENDER')
+app.config['MAIL_DEFAULT_SENDER'] = "adamjackson397@gmail.com"
 mail = Mail(app)
 
 ##############  TWILIO  #############
 
-
-
-
-
-# ---------------------------------------------------------
+# -------------------------------------------
 
 # INDEX
-@app.route('/')
-def index():
-    """View index page"""
-    if 'current_user' not in session:
-        return redirect('/login')
-    else:
-        username = session['current_user']
-        return redirect(f'/home')
-    return render_template('home.html')
+# @app.route('/')
+# def index():
+#     """View index page"""
+#     if 'current_user' not in session:
+#         return redirect('/login')
+#     else:
+#         username = session['current_user']
+#         return redirect(f'/home')
+#     return render_template('home.html')
 
 
 # HOMEPAGE
@@ -127,9 +124,6 @@ def add_user_produce(produce_id):
     if request.method == 'POST':
         user_id = session['current_user_id']
 
-        print('USER_ ID IS: ', user_id)
-        print('PRODUCE_ ID IS: ', produce_id)
-
         session['quantity'] = request.form['quantity']
         session['condition'] = request.form['condition']
         new_quantity = int(session['quantity'])
@@ -207,15 +201,19 @@ def exchange():
     """Show exchange page"""
 
     radius_in_miles = request.args.get('distance')
-    # radius_in_miles = int(radius_in_miles)
+
     if (radius_in_miles == None):
-        radius_in_miles = 3
+        radius_in_miles = 20
+    
+    radius_in_miles = float(radius_in_miles)
     
     # we are passing in 'miles', need to convert to meters
     METERS_IN_MILE = 1609.34
     radius = radius_in_miles * METERS_IN_MILE
     
     zipcode = request.args.get('zipcode')
+    if (zipcode == None):
+        zipcode = '94114'
 
     # get user session-- check if logged in -- save zipcode
 
@@ -232,30 +230,30 @@ def exchange():
     return render_template('exchange.html', exchange_items=exchange_items, zipcode=zipcode, radius=radius  )
 
 
-
-# TWILIO SENDGRID API
-@app.route('/exchange/contact', methods=['GET', 'POST'])
-def email_user(id):
+################### TWILIO SENDGRID API ROUTE #################
+@app.route('/exchange/contact/<int:id>', methods=['GET', 'POST'])
+def email_exchange(id):
     """Sends email to user using Twilio SendGrid API"""
     if request.method == 'POST':
-        recipient = request.form['recipient']
-        msg = Message('Twilio SendGrid Test Email', recipients=[recipient])
-        msg.body = ('Congratulations! You have sent a test email with '
-                    'Twilio SendGrid!')
+        # look up the user's email address by id
+        user = crud.lookup_user_by_id(id)
+        recipient_email = user.email
+        
+        # TEMP: hardcode email to ME for the demos!!!
+        recipient_email = "charlottestowell@berkeley.edu"
+        
+        msg = Message('Twilio Test Email', recipients=[recipient_email])
+        msg.body = ('Hello! I saw your post & would love to meet-up.'
+                    'Let me know!')
         msg.html = ('<h1>Twilio SendGrid Test Email</h1>'
-                    '<p>Congratulations! You have sent a test email with '
-                    '<b>Twilio SendGrid</b>!</p>')
+                    '<p>Hello! I saw your post & would love to meet-up '
+                    '<b>Let me know!</b>!</p>')
         mail.send(msg)
-        flash(f'A test message was sent to {recipient}.')
+        flash(f'A test message was sent to {recipient_email}.')
         return redirect(url_for('exchange'))
     return render_template('exchange.html')
 
-
-
-
-
-
-
+################### TWILIO SENDGRID API ROUTE #################
 
 
 
@@ -271,8 +269,6 @@ def login_page():
     return render_template('login.html')
 
 # REGISTER
-
-
 @app.route('/register', methods=['GET', 'POST'])
 def register_page():
     """View sign up form"""
@@ -361,20 +357,55 @@ def handle_logout():
 
 #--------------------------- NEW ------------------------------------------#
 
+API_KEY = '94016bc42734493084e87bba6984b963'
+############################## SPOONACULAR API ###################################
+@app.route('/', methods=['GET', 'POST'])
+def recipes():
+    if request.method == 'POST':
+        content = requests.get(
+            "https://api.spoonacular.com/recipes/findByIngredients?ingredients=" +
+            (request.form['restaurant_name']) +
+            "&apiKey=" + API_KEY)
+        json_response = json.loads(content.text)
+        print(json_response)
+        return render_template("recipes.html", response=json_response) if json_response != [] else render_template(
+            "recipes.html", response="")
+    else:
+        return render_template("recipes.html")
+############################## SPOONACULAR API ###################################
 
-@app.route("/user/update/<int:id>", methods=['GET', 'POST'])
-def update_produce(id):
-    """Update user produce"""
-    # if request.method == 'POST':
 
-    #     flash("Produce Updated Successfully")
-    return redirect(url_for('user'))
 
-    db.session.delete(user_produce_id)
-    db.session.commit()
-    flash('Produce has been deleted!')
+"""creat a helping function parse the complex API response 
+    then forms a simpler dictionary of only the data needed 
+    from the API response"""
 
-    return redirect('/user')
+def parse_api_results(complex_results):
+
+    recipe_details = {}
+    ingredients = []
+
+    recipe_details['title'] = complex_results['title']
+    recipe_details['image'] = complex_results['image']
+    recipe_details['servings'] = complex_results['servings']
+    recipe_details['readyInMinutes'] = complex_results['readyInMinutes']
+    recipe_details['sourceUrl'] = complex_results['sourceUrl']
+    # recipe_details['instructions'] = complex_results['instructions']..we need a different way to get the steps
+    
+    for each_step in complex_results['analyzedInstructions'][0]['steps']:
+        instructions = each_step['step']
+    recipe_details['instructions'] = instructions
+
+    
+    for each_ingredient in complex_results["extendedIngredients"]:
+        ingredient = each_ingredient["originalString"]
+        ingredients.append(ingredient)
+    # print(ingredients)   
+    recipe_details["ingredients"] = ingredients
+
+    return recipe_details
+
+
 
 
 #-------------------------END--------------------------------#

@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+
+{% block body %}
+
+
+
+
+
+<head>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+        integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css"
+        integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
+        integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+        crossorigin="anonymous"></script>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+</head>
+
+<form method="POST">
+    <div class='col-xs-12 col-sm-12 col-md-10 col-lg-10'>
+        <div class='input-group'>
+            <input class='form-control' type='text' name='restaurant_name'
+                placeholder='Enter ingredients separated by commas...' />
+            <span class="input-group-btn">
+                <button type='submit' class='btn btn-default'>
+                    <span class='glyphicon glyphicon-search'></span>
+                </button>
+            </span>
+
+        </div>
+    </div>
+</form>
+
+
+<div class='col-xs-12 col-sm-12 col-md-10 col-lg-10'>
+    {% if response!=undefined and response|length > 0%}
+    <h2>Recipes using these ingredients</h2>
+    {% else %}
+    {% if response!="No recipes found"%}
+    <p>No recipes found</p>
+    {% else %}
+    <p></p>
+    {% endif %}
+    {% endif %}
+    <table>
+        <tr>
+            {% for entry in response %}
+            <div class='col-xs-3 col-sm-3 col-md-3 col-lg-3' id="recipeSelectionComponent">
+                <img id="recipeImage" src="{{entry['image']}}">
+                <button id="{{entry['id']}}" type=button class="btn btn-link" onclick="recipeSteps({{entry['id']}})">{{
+                    entry['title'] }}
+                </button>
+            </div>
+            {% endfor %}
+        </tr>
+    </table>
+</div>
+
+{% endblock%}

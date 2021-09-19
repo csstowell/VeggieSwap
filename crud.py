@@ -19,6 +19,13 @@ def create_user(username, email, password, address, city, zipcode, lat, lng, pho
 
     return user
 
+def lookup_user_by_id(id):
+    """Returns the user matching the userId"""
+
+    user = User.query.filter_by(id=id).first()
+
+    return user
+
 # CHECK USERNAME EXISTS
 def lookup_user(username):
     """Returns True if username exists in User table"""
@@ -253,3 +260,8 @@ def get_produce_by_name(name):
         return flash("Already")
     else:
         return None
+
+
+
+##################################################
+

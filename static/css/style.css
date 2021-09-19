@@ -1,0 +1,21 @@
+body {
+    font-family: 'Montserrat', sans-serif;
+    color: #1d3234;
+}
+
+h1, h2 {
+    font-family: 'Grandstander', cursive;
+    font-weight: 600;
+    font-size: 2.5rem;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+input {
+    border-radius: 15px;
+}
+
+a {
+    color: #E04700;
+}

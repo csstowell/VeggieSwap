@@ -77,13 +77,16 @@ Marketplace
     <form method="get">
       <label for="distance">Select distance:</label>
       <select class="btn btn-secondary " id="distance" name="distance" required>
-        <option value="0.5">0.5 miles</option>
-        <option value="1">1.0 miles</option>
-        <option value="1.5">1.5 miles</option>
-        <option value="2.0">2.0 miles</option>
-        <option value="3.0">3.0 miles</option>
+        <option value="1.0">1 miles</option>
+        <option value="2.0">2 miles</option>
+        <option value="3.0">3 miles</option>
+        <option value="5.0">5 miles</option>
+        <option value="10.0">10 miles</option>
+        <option value="20.0">20 miles</option>
+        <option value="50.0">50 miles</option>
       </select>
       <button class="btn btn-secondary searchButton" type="submit" href="/exchange/">Search</button>
+    </form>
       {% endblock%}
   </div>
 
@@ -111,5 +114,27 @@ Marketplace
 <!-- Async script executes immediately and must be after any DOM elements used in callback. -->
 <script
   src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDIYpD84hN93_pAL4oomppVemp3JYSvaRE&callback=initMap&libraries=&v=weekly&channel=2"
-  async></script>
+  async>
+</script>
+
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+<script>
+  $(document).ready(function() {
+  // Construct URL object using current browser URL
+  var url = new URL(document.location);
+
+  // Get query parameters object
+  var params = url.searchParams;
+
+  // Get value of paper
+  var distance = params.get("distance");
+  if (distance) {
+    // Set it as the dropdown value
+    $("#distance").val(distance);
+  }
+
+
+});
+
+</script>
 {% endblock %}
