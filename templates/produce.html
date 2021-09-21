@@ -1,6 +1,6 @@
 {% extends 'base.html' %} {% block head %} {% endblock %} {% block body %}
 <!---------------- STYLE -------------------->
-<style>
+<!-- <style>
     p {
         position: relative;
         color: rgb(253, 89, 89);
@@ -9,16 +9,32 @@
     }
     
     thead {
-        font-family: courier;
         position: relative;
         font-size: 130%;
     }
-    
+    table {
+        border: 1px solid black;
+        font: 16px "Open Sans", Helvetica, Arial, sans-serif;
+        border-spacing: 0;
+        border-collapse: collapse;
+    }
     tr {
         border: 2px solid powderblue;
         padding: 30px;
     }
-</style>
+    /* tbody > tr:nth-of-type(even) {
+        background-color: rgb(237, 238, 242);
+    } */
+
+    th, td {
+        border: 1px solid black;
+        padding:4px 6px;
+    }
+
+    th {
+    vertical-align: bottom;
+    }
+</style> -->
 <!---------------------  ----------------------------------------->
 
 <!--------------------- SEARCH ----------------------------------------->
@@ -33,19 +49,32 @@
         {% endif %} {% endwith %} {% from "_formhelpers.html" import render_field %}
         <dl>
             <p>{{ render_field(form.search) }}</p>
+            <input class="searchButton" type="submit" value="Search">
         </dl>
-        <p><input class="searchButton" type="submit" value="Search"></p>
+        
 
     </form>
 </section>
 
+<p>
+    <a href="{{ url_for('recipes') }}">Search for recipes by ingredients</a>
+</p>
+
+<style>
+    p {
+        font-family: Courier, Monaco, monospace;
+        margin:10px;
+        text-align: right;
+    }
+</style>
 <!--------------------------------------------- PRODUCE TABLE -------------------------------------------------------->
 <section>
+    
     <table class="table table-hover">
         <thead>
             <tr>
                 <!-- Produce Columns HERE -->
-                <th scope="col">Name</th>
+                <th scope="col" >Name</th>
                 <th scope="col">Handpick</th>
                 <th scope="col">Store</th>
                 <th scope="col">Options</th>
@@ -55,7 +84,7 @@
             <!-- Your rows inside the table HERE: -->
             {% for item in items %}
             <tr>
-                <td>{{ item.name }}</td>
+                <td style='font-weight:bold;'>{{ item.name }}</td>
                 <td>{{ item.handpick }}</td>
                 <td>{{ item.store }}</td>
                 <td>
