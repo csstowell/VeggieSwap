@@ -6,21 +6,26 @@
 </div>
 
 <div class="row align-items-center">
-    <div class="col">{{ item.userProduce.produce.name}} </div>
-    <div class="col">{{ item.amount}} </div>
-    <div class="col"> {{ item.userProduce.user.username }} </div>
-    <div class="col">
-        <button type="button" class="btn email-button" data-toggle="modal" data-target="#modalContactForm"></button>
+    <div class="col-4">{{ item.userProduce.produce.name}} </div>
+    <div class="col-2">{{ item.amount}} </div>
+    <div class="col-4"> {{ item.userProduce.user.username }} </div>
+    <div class="col-2">
+        <button type="button" class="btn email-button" data-toggle="modal" data-target="#modalContactForm_{{ item.userProduce.id }}"></button>
     </div>
 </div>
 
-<!-------------- MODAL CONTACT FORM  ---------------->
-<div class="modal fade" id="modalContactForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+
+
+<!-------------- MODAL TWILIO FLASK MAIL ---------------->
+<div class="modal fade" id="modalContactForm_{{ item.userProduce.id }}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
     aria-hidden="true">
     <div class="modal-dialog" role="document">
-        <form action="/exchange/contact/{{ item.userProduce.user.id }}" method="post">
+        
+        <form action="/exchange/contact/{{ item.userProduce.id }}" method="post">
+
             <div class="modal-content">
                 <div class="modal-header text-center">
+
                     <h4 class="modal-title w-100 font-weight-bold">Contact {{ item.userProduce.user.username }}</h4>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
@@ -30,7 +35,9 @@
 
                     <div class="md-form">
                         <i class="fas fa-pencil prefix grey-text"></i>
-                        <textarea type="text" id="form8" class="md-textarea form-control" rows="4" placeholder="Your Message"></textarea>
+                        <textarea type="text" id="messageContent_{{ item.userProduce.id }}" 
+                            name="messageContent_{{ item.userProduce.id }}" 
+                            class="md-textarea form-control" rows="4" placeholder="Your Message"></textarea>
                     </div>
 
                 </div>

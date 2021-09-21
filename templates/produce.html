@@ -1,17 +1,5 @@
-{% extends 'base.html' %}
-<!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script>
-        $(document).ready(function () {
-            $("#myInput").on("keyup", function () {
-                var value = $(this).val().toLowerCase();
-                $("#myDIV *").filter(function () {
-                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
-                });
-            });
-        });
-    </script> -->
-{% block head %} {% endblock %} {% block body %}
-
+{% extends 'base.html' %} {% block head %} {% endblock %} {% block body %}
+<!---------------- STYLE -------------------->
 <style>
     p {
         position: relative;
@@ -31,11 +19,9 @@
         padding: 30px;
     }
 </style>
+<!---------------------  ----------------------------------------->
 
-
-
-
-
+<!--------------------- SEARCH ----------------------------------------->
 <section id="produce-search">
     <form method="post">
         {% with messages = get_flashed_messages() %} {% if messages %}
@@ -53,15 +39,15 @@
     </form>
 </section>
 
-<!----------------------- PRODUCE TABLE ------------------>
+<!--------------------------------------------- PRODUCE TABLE -------------------------------------------------------->
 <section>
     <table class="table table-hover">
         <thead>
             <tr>
                 <!-- Produce Columns HERE -->
                 <th scope="col">Name</th>
+                <th scope="col">Handpick</th>
                 <th scope="col">Store</th>
-                <th scope="col">Variety</th>
                 <th scope="col">Options</th>
             </tr>
         </thead>
@@ -70,9 +56,8 @@
             {% for item in items %}
             <tr>
                 <td>{{ item.name }}</td>
-                <td>{{ item.nutrient }}</td>
+                <td>{{ item.handpick }}</td>
                 <td>{{ item.store }}</td>
-                <td>{{ item.variety }}</td>
                 <td>
                     <a class="btn btn-primary" href="/produce/{{ item.id }}">Details</a>
                 </td>
@@ -84,19 +69,6 @@
     </body>
 
     </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
     {% endblock %}

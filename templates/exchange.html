@@ -1,108 +1,101 @@
-{% extends 'base.html' %}
-{% block title %}
-Marketplace
-{% endblock %}
-
-
-
+{% extends 'base.html' %} {% block title %} Marketplace {% endblock %} 
 {% block body %}
 
 <!------------------- MAP ------------------->
 <script>
+    function initMap() {
+        let lat = 0;
+        let lng = 0;
+        var zipCode = '{{ zipcode }}';
+        const geocoder = new google.maps.Geocoder();
 
+        geocoder.geocode({
+            'address': zipCode
+        }, (results, status) => {
+            if (status == 'OK') {
+                // Create the map and center on the zipcode location
+                const map = new google.maps.Map(document.getElementById("map"), {
+                    zoom: 11,
+                    center: results[0].geometry.location,
+                });
 
-  function initMap() {
-    let lat = 0;
-    let lng = 0;
-    var zipCode = '{{ zipcode }}';
-    const geocoder = new google.maps.Geocoder();
+                // Place a marker on the center
+                var marker = new google.maps.Marker({
+                    map: map,
+                    position: results[0].geometry.location,
+                    icon: {
+                        url: "http://maps.google.com/mapfiles/ms/icons/blue-dot.png"
+                    }
+                });
 
-    geocoder.geocode({ 'address': zipCode }, (results, status) => {
-      if (status == 'OK') {
-        // Create the map and center on the zipcode location
-        const map = new google.maps.Map(document.getElementById("map"), {
-          zoom: 12,
-          center: results[0].geometry.location,
+                // Add circle overlay and bind to marker
+                var circle = new google.maps.Circle({
+                    map: map,
+                    radius: {{ radius }}, //  in metres
+                    fillColor: 'green',
+                    fillOpacity: 0.15
+                });
+                circle.bindTo('center', marker, 'position');
+
+                {% for item in exchange_items %}
+                if ({{item.userProduce.user.lat}} != 'None') {
+                    const coord = {
+                        lat: {{item.userProduce.user.lat}},
+                        lng: {{item.userProduce.user.lng}}
+                    }
+                    new google.maps.Marker({
+                        position: coord,
+                        label: '{{item.userProduce.user.username}}',
+                        title: 'title',
+                        icon: {
+                            url: "http://maps.google.com/mapfiles/ms/icons/green-dot.png"
+                        },
+                        map: map
+                    });
+
+                } {% endfor %}
+
+            } else {
+                alert('Geocode was not successful for the following reason: ' + status);
+            }
         });
 
-        // Place a marker on the center
-        var marker = new google.maps.Marker({
-          map: map,
-          position: results[0].geometry.location,
-          icon: {
-            url: "http://maps.google.com/mapfiles/ms/icons/blue-dot.png"
-          }
-        });
-
-        // Add circle overlay and bind to marker
-        var circle = new google.maps.Circle({
-          map: map,
-          radius: {{ radius }},    //  in metres
-          fillColor: 'green',
-          fillOpacity: 0.15
-        });
-        circle.bindTo('center', marker, 'position');
-
-        {% for item in exchange_items %}
-        if ({{item.userProduce.user.lat}} != 'None') {
-          const coord = {
-            lat: {{item.userProduce.user.lat}},
-            lng: {{item.userProduce.user.lng}}
-          }
-          new google.maps.Marker({
-            position: coord,
-            label: '{{item.userProduce.user.username}}',
-            title: 'title',
-            icon: {
-              url: "http://maps.google.com/mapfiles/kml/shapes/parks.png"
-            },
-            map: map
-          });
-
-        }
-        {% endfor %}
-
-      } else {
-        alert('Geocode was not successful for the following reason: ' + status);
-      }
-    });
-
-  }
+    }
 </script>
 
 <!------------------- RADIUS SEARCH ------------------->
 <div class="container">
-  <div class="row">
-    {% block form %}
-    <form method="get">
-      <label for="distance">Select distance:</label>
-      <select class="btn btn-secondary " id="distance" name="distance" required>
-        <option value="1.0">1 miles</option>
-        <option value="2.0">2 miles</option>
-        <option value="3.0">3 miles</option>
-        <option value="5.0">5 miles</option>
-        <option value="10.0">10 miles</option>
-        <option value="20.0">20 miles</option>
-        <option value="50.0">50 miles</option>
-      </select>
-      <button class="btn btn-secondary searchButton" type="submit" href="/exchange/">Search</button>
-    </form>
-      {% endblock%}
-  </div>
+    <div class="row">
+        {% block form %}
+        <form method="get">
+            <label for="distance">Select distance:</label>
+            <select class="btn btn-secondary " id="distance" name="distance" required>
+                <option value="1.0">1 miles</option>
+                <option value="2.0">2 miles</option>
+                <option value="3.0">3 miles</option>
+                <option value="5.0">5 miles</option>
+                <option value="10.0">10 miles</option>
+                <option value="20.0">20 miles</option>
+                <option value="50.0">50 miles</option>
+            </select>
+            <button class="btn btn-secondary searchButton" type="submit" href="/exchange">Search</button>
+        </form>
+        {% endblock%}
+    </div>
 
-  <!------------------- EXCHANGES (produceEntry.html) -------------------------->
-  <div class="row align-items-start">
-    <div class="col-8">
-      <div style="height: 100vh; width: 100%;">
-        <div id="map" style="height:100%; width: 100%;"></div>
-      </div>
+    <!------------------- EXCHANGES (produceEntry.html) -------------------------->
+    <div class="row align-items-start">
+        <div class="col-8">
+            <div style="height: 100vh; width: 100%;">
+                <div id="map" style="height:100%; width: 100%;"></div>
+            </div>
+        </div>
+        <div class="col-4 container">
+            {% for item in exchange_items %} 
+                {% include "produceEntry.html" %} 
+            {% endfor %}
+        </div>
     </div>
-    <div class="col-4 container">
-      {% for item in exchange_items %}
-      {% include "produceEntry.html" %}
-      {% endfor %}
-    </div>
-  </div>
 </div>
 
 
@@ -112,29 +105,30 @@ Marketplace
 
 <!-- KEY: AIzaSyB41DRUbKWJHPxaFjMAwdrzWzbVKartNGg -->
 <!-- Async script executes immediately and must be after any DOM elements used in callback. -->
-<script
-  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDIYpD84hN93_pAL4oomppVemp3JYSvaRE&callback=initMap&libraries=&v=weekly&channel=2"
-  async>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDIYpD84hN93_pAL4oomppVemp3JYSvaRE&callback=initMap&libraries=&v=weekly&channel=2" async>
 </script>
 
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
 <script>
-  $(document).ready(function() {
-  // Construct URL object using current browser URL
-  var url = new URL(document.location);
+    $(document).ready(function() {
+        // Construct URL object using current browser URL
+        var url = new URL(document.location);
 
-  // Get query parameters object
-  var params = url.searchParams;
+        // Get query parameters object
+        var params = url.searchParams;
 
-  // Get value of paper
-  var distance = params.get("distance");
-  if (distance) {
-    // Set it as the dropdown value
-    $("#distance").val(distance);
-  }
+        // Get value of paper
+        var distance = params.get("distance");
+        if (distance) {
+            // Set it as the dropdown value
+            $("#distance").val(distance);
+        }
 
 
-});
-
+    });
 </script>
 {% endblock %}
+
+
+
+

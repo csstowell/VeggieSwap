@@ -1,16 +1,17 @@
 """CRUD operations"""
 # IMPORT MODEL
 import math
+from sqlalchemy import func
 from models import (db, User, Produce, UserProduce,
                     ExchangeProduce, connect_to_db)
 
 # CREATE USER
-def create_user(username, email, password, address, city, zipcode, lat, lng, phone=None):
+def create_user(username, email, password, address, city, state, zipcode, lat, lng, phone=None):
     """Create and return a new user"""
 
     user = User(username=username, email=email,
                 password=password,
-                address=address, city=city, zipcode=zipcode,
+                address=address, city=city, state=state, zipcode=zipcode,
                 lat=lat, lng=lng,
                 phone=phone)
 
@@ -81,7 +82,9 @@ def add_user_produce(produce_id, user_id, quantity, condition):
 def get_user_veggies(username):
     """Takes in a username and returns user's user_produce"""
     user_produce = db.session.query(UserProduce).select_from(UserProduce).join(
-        User).join(Produce).filter(User.username == username).all()
+        User).join(Produce).filter(func.lower(User.username) == func.lower(username)).all()
+
+        
 
     return user_produce
 
@@ -203,6 +206,7 @@ def get_exchange_by_distance(center_lat, center_lng, radius):
         
         if (distance < radius):
             exchangesWithinCircle.append(exchange)
+
 
     # sort the exchanges 
     # filter for points with distance from bounding circle centre less than radius, and sort

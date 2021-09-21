@@ -1,20 +1,19 @@
 {% extends 'base.html' %} {% block body %}
 
-<h2>{{ display_produce.name }}</h2>
+<h1>{{ display_produce.name }}</h1>
 
 <div class="row">
-    <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">
+    <div class="col">
         <img src="/static/img/veggies/{{ display_produce.name }}.jpeg" class="img-responsive">
     </div>
 
-    <div class="col-xs-8 col-sm-6 col-md-4 col-lg-3">
+    <div class="col">
         <div class="well">
-
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalQuickView">Add To Garden</button>
         </div>
     </div>
 </div>
 <!------------------------------------------------  MODAL ADD  ------------------------------------>
-<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalQuickView">Add To Garden</button>
 
 
 
@@ -59,22 +58,21 @@
 </div>
 
 <!------------------------------------------------  MODAL END  ------------------------------------>
-<div class="produce-details">
-    <h5>Select:</h5>
-    <ul>
-        <li>{{ display_produce.handpick }}</li>
-    </ul>
 
-    <h5>Variety:</h5>
-    <ul>
-        <li>{{ display_produce.variety }}</li>
-    </ul>
+<h2>Details:</h2>
 
-    <h5>Store:</h5>
-    <ul>
-        <li>{{ display_produce.store }}</li>
-    </ul>
 
-</div>
+    <summary>Nutrition</summary>
+    <p>{{ display_produce.nutrient }}</p>
+
+
+    <summary>Season</summary>
+    <p>{{ display_produce.season }}</p>
+
+
+    <summary>Preparation</summary>
+    <p>{{ display_produce.prep }}</p>
+
+
 
 {% endblock %}

@@ -1,36 +1,38 @@
-h3 {
-    color: blue;
-    font-family: "Gill Sans", sans-serif;
-    font-size: 150%;
-}
-
-h4 {
-    font-family: Montserrat;
-    font-weight: 500;
-    font-weight: lighter;
-}
 
 ul {
     position: relative;
 }
 
 li {
-    font-family: 'Courier New', Courier, monospace;
     font-size: larger;
+    font-weight: bold;
 }
 
-#produce-search {
-    font-family: 'Courier New', Courier, monospace;
-}
-
-#produce-search {
-    font-family: 'Courier New', Courier, monospace;
+.textarea{
+    width:200px;
+    height:50px;
+    border:1px solid black;
 }
 
 .profile-produce-comments {
     overflow-y: scroll;
-    height: 100px;
+
     width: 100%;
     resize: none;
     /* Remove this if you want the user to resize the textarea */
+}
+
+.card-body {
+    flex: 1 1 auto;
+    min-height: 1px;
+    padding: 1rem;
+    box-shadow: inset 1px 1px 3px #ccc;
+    border-radius: 5px;
+}
+
+.card-footer {
+    background-color: rgba(0,0,0,.03);
+    border-top: 1px solid rgba(0,0,0,.125);
+    box-shadow: inset 1px 1px 3px #ccc;
+    border-radius: 5px;
 }

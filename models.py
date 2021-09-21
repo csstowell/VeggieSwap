@@ -32,7 +32,7 @@ class User(db.Model):
     zipcode = db.Column(db.Integer, nullable=False)
     address = db.Column(db.String)
     city = db.Column(db.String)
-    state = db.Column(db.String)
+    state = db.Column(db.String, nullable=False)
     lat = db.Column(db.Float)
     lng = db.Column(db.Float)
     phone = db.Column(db.String, unique=True)
@@ -55,7 +55,8 @@ class Produce(db.Model):
     store = db.Column(db.String)
     variety = db.Column(db.String)
     nutrient = db.Column(db.String)
-    img_url = db.Column(db.Text)
+    season = db.Column(db.Text)
+    prep = db.Column(db.Text)
 
     def __repr__(self):
         """Show human-readable info about vegetable"""
@@ -117,7 +118,7 @@ class ExchangeProduce(db.Model):
 
     amount = db.Column(db.Integer, nullable=False)
     comment = db.Column(db.String)
-    date = db.Column(db.Date, nullable=True)
+    date = db.Column(db.Date)
     state = db.Column(db.String)
 
     #X = db.relationship('UserProduce', secondary='join(ExchangeProduce, UserProduce, ExchangeProduce.userproduce_id == UserProduce.id)', uselist=False, viewonly=True, backref='exchange_produce', sync_backref=False)

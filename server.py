@@ -8,39 +8,50 @@ from db_setup import init_db, db_session
 from sqlalchemy import func
 import requests
 import simplejson as json
-
+import sendgrid
+import os
 init_db()
-
-
 app = Flask(__name__)
 app.secret_key = "SECRET"
 
-##############  TWILIO  #############
-# import os
-# from flask import Flask, render_template, request, redirect, url_for, flash
-# from flask_mail import Mail, Message
 
-# app = Flask(__name__)
-# app.config['SECRET_KEY'] = 'top-secret!'
-# app.config['MAIL_SERVER'] = 'smtp.sendgrid.net'
-# app.config['MAIL_PORT'] = 587
-# app.config['MAIL_USE_TLS'] = True
-# app.config['MAIL_USERNAME'] = 'apikey'
-# app.config['MAIL_PASSWORD'] = os.environ.get('SENDGRID_API_KEY')
-# #app.config['MAIL_DEFAULT_SENDER'] = os.environ.get('MAIL_DEFAULT_SENDER')
-# app.config['MAIL_DEFAULT_SENDER'] = "adamjackson397@gmail.com"
-# mail = Mail(app)
 
-##############  TWILIO  #############
+#################################################
 
-# -------------------------------------------
+@app.route('/exchange/contact/<int:id>', methods=['POST'])
+def sendGrid(id):
+    """Send email using Twilio Sendgrid"""
 
-# INDEX
-# @app.route('/')
-# def index():
-#     """View index page"""
-#     return render_template('home.html')
+    if request.method == 'POST':
+        content_fieldId = 'messageContent_'+str(id)
+        message_content = request.form[content_fieldId]
+        api_key = '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'
+        sg = sendgrid.SendGridAPIClient(api_key = api_key)
+        #sg = sendgrid.SendGridAPIClient(api_key = os.environ.get('SENDGRID_API_KEY'))
+        from sendgrid.helpers.mail import Mail, Email, To, Content
 
+        from_email = Email("adamjackson397@gmail.com")  # verified sender
+        to_email = To("charlottestowell@berkeley.edu")  # recipient
+        subject = "Saw your produce listing!"
+
+        # content type can be text/plain or text/html
+        content = Content("text/plain", message_content)
+
+        # construct the message
+        mail = Mail(from_email, to_email, subject, content)
+
+        # Get a JSON-ready representation of the Mail object
+        mail_json = mail.get()
+
+
+        # Send an HTTP POST request to /mail/send
+        response = sg.client.mail.send.post(request_body=mail_json)
+        print(response.status_code)
+        print(response.headers)
+        flash(f'Email sent!')
+        return redirect(url_for('exchange'))
+
+####################################################################
 
 # HOMEPAGE
 @app.route('/', methods=['GET', 'POST'])
@@ -56,9 +67,6 @@ def produce_page():
     """View all produce listings from database"""
     if 'current_user' not in session:
         return redirect('/login')
-    else:
-        username = session['current_user']
-        return redirect(f'/')
 
 
     search = ProduceSearchForm(request.form)
@@ -205,7 +213,7 @@ def exchange():
     radius_in_miles = request.args.get('distance')
 
     if (radius_in_miles == None):
-        radius_in_miles = 20
+        radius_in_miles = 5
     
     radius_in_miles = float(radius_in_miles)
     
@@ -231,40 +239,7 @@ def exchange():
 
     return render_template('exchange.html', exchange_items=exchange_items, zipcode=zipcode, radius=radius  )
 
-
-################### TWILIO SENDGRID API ROUTE #################
-@app.route('/exchange/contact/<int:id>', methods=['GET', 'POST'])
-def email_exchange(id):
-    """Sends email to user using Twilio SendGrid API"""
-    if 'current_user' not in session:
-        return redirect('/login')
-    else:
-        username = session['current_user']
-        return redirect(f'/home')
-    if request.method == 'POST':
-        # look up the user's email address by id
-        user = crud.lookup_user_by_id(id)
-        recipient_email = user.email
-        
-        # TEMP: hardcode email to ME for the demos!!!
-        recipient_email = "charlottestowell@berkeley.edu"
-        
-        msg = Message('Twilio Test Email', recipients=[recipient_email])
-        msg.body = ('Hello! I saw your post & would love to meet-up.'
-                    'Let me know!')
-        msg.html = ('<h1>Twilio SendGrid Test Email</h1>'
-                    '<p>Hello! I saw your post & would love to meet-up '
-                    '<b>Let me know!</b>!</p>')
-        mail.send(msg)
-        flash(f'A test message was sent to {recipient_email}.')
-        return redirect(url_for('exchange'))
-    return render_template('exchange.html')
-
-################### TWILIO SENDGRID API ROUTE #################
-
-
-
-
+###############################################################
 
 #--------------------------- LOGIN/REGISTER HANDLERS ------------------------------------------#
 
@@ -299,7 +274,7 @@ def handle_login():
     if password == crud.get_password(username):
         session['current_user'] = username
         session['current_user_id'] = user.id
-        return redirect("/home")
+        return redirect("/user")
     else:
         flash("Wrong password. Please try again.")
         return redirect('/login')
@@ -339,8 +314,7 @@ def handle_register():
             lat = geocode_result[0]["geometry"]["location"]["lat"]
             lng = geocode_result[0]["geometry"]["location"]["lng"]
 
-            user = crud.create_user(
-                username, email, password1, address, city, zipcode, lat, lng)
+            user = crud.create_user(username, email, password1, address, city, state, zipcode, lat, lng)
             session['current_user'] = username.title()
             session['current_user_id'] = user.id
             session['user_lat'] = lat
@@ -365,16 +339,12 @@ def handle_logout():
 API_KEY = '94016bc42734493084e87bba6984b963'
 
 ###################   SPOONACULAR API    ###################################
-
-
 @app.route('/recipes', methods=['GET', 'POST'])
 def recipes():
     """Returns recipes based on ingredient"""
     if 'current_user' not in session:
         return redirect('/login')
-    else:
-        username = session['current_user']
-        return redirect(f'/home')
+    
     if request.method == 'POST':
         content = requests.get(
             "https://api.spoonacular.com/recipes/findByIngredients?ingredients=" +
