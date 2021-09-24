@@ -201,8 +201,8 @@ def add_exchange_produce(id):
             db.session.commit()
         flash('Added to the exchange!')
 
-    return redirect('/exchange')
-    return render_template('exchange.html', exchange_items=exchange_items, user_produce=user_produce)
+    return redirect('/user')
+    return render_template('user.html', exchange_items=exchange_items, user_produce=user_produce)
 
 
 # DISPLAY EXCHANGE PAGE

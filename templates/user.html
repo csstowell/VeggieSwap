@@ -35,8 +35,6 @@
                 <form action="{{ url_for( 'delete_user_produce', id=user_produce.id) }}" method="post">
                     <input type="submit" class="btn btn-primary" value="Delete" onclick="return confirm( 'Are You Sure To Delete ?')" />
                 </form>
-                <small class="text-muted">Last updated 3 mins ago</small>
-
             </div>
         </div>
 
@@ -68,11 +66,6 @@
                     <div class="form-group">
                         <label for="comment">Comment: </label>
                         <input type="text" id="comment" name="comment" value="{{comment}}">
-                    </div>
-                    <div class="form-group">
-                        <label for="state"> Share contact info</label>
-                        <input type="checkbox" id="state" name="state" value="ContactInfo">
-                        <br><br>
                     </div>
                 </div>
 

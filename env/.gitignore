@@ -1,3 +1,6 @@
+sendgrid.env
+sendgrid.env
+
 # created by virtualenv automatically
 * Twilio API KEY: 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
 SENDGRID_API_KEY=”<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>”
