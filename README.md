@@ -1,12 +1,12 @@
 # VeggieSwap
 # Tech Stack:
-Tech Stack
 Frontend: JavaScript | jQuery | HTML5 | CSS | Bootstrap
 Backend: Python3 | Flask | SQLAlchemy | Jinja2
 APIs: Twilio | GoogleMaps | Geocoder
 Database: PostgreSQL
-# About
 
+
+# About
 VeggieSwap is a full stack web application for swapping excess produce locally. This application allows users to store information and view other local growers in their neighborhood. I was motivated to make this project because I wanted a way to exchange/swap excess produce with local neighbors and the community in a more engaging and efficient way.
 
 

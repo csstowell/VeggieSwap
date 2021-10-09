@@ -86,25 +86,6 @@
 
     <!-- ########################################################## -->
 
-
-    <!-- <section>
-        <h3 id="portfolio">Portfolio</h3>
-        <ul>
-            {% for entry in response %}
-            <li><img class="my-image" src="{{entry['image']}}"></li>
-            <li><button id="{{entry['id']}}" type=button class="btn btn-link" onclick="recipeSteps({{entry['id']}})">{{
-                    entry['title'] }}</button>
-            </li>
-        </ul>
-        {% endfor %}
-    </section> -->
-
-
-    <!-- ########################################### -->
-
-
-
-
     <div class='col-xs-12 col-sm-12 col-md-10 col-lg-10' , id='recipeSearch'>
 
         {% if response!=undefined and response|length > 0%}
@@ -130,7 +111,7 @@
                     </tr>
                 </tbody>
             </tr>
-        </table> -->
+        </table> 
         <!-- {% for entry in response %}
                 <div class='col-xs-3 col-sm-3 col-md-3 col-lg-3' id="recipeSelectionComponent">
                     <img id="recipeImage" src="{{entry['image']}}">

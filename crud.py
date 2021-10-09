@@ -76,7 +76,7 @@ def add_user_produce(produce_id, user_id, quantity, condition):
     db.session.add(user_produce)
     db.session.commit()
     return user_produce
-# update produce quantity - if existing
+
 
 # GET USER VEGGIES
 def get_user_veggies(username):
@@ -127,14 +127,7 @@ def update_user_produce_quantity(userproduce_id, new_produce_amount):
     # save the value
     db.session.commit()
     return 
-    
-# # GET USER'S PRODUCE
-# def get_user_produce_by_id(userId):
-#     """Returns True if email exists in User table"""
 
-#     exchange_items = db.session.query(UserProduce).all()
-
-#     return exchange_items
 
 # UPDATE USER PRODUCE (QUANTITY)
 def update_user_produce_amount(user_id, produce_id, new_quantity):

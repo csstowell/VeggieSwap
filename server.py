@@ -27,7 +27,6 @@ def sendGrid(id):
         message_content = request.form[content_fieldId]
         api_key = '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'
         sg = sendgrid.SendGridAPIClient(api_key = api_key)
-        #sg = sendgrid.SendGridAPIClient(api_key = os.environ.get('SENDGRID_API_KEY'))
         from sendgrid.helpers.mail import Mail, Email, To, Content
 
         from_email = Email("adamjackson397@gmail.com")  # verified sender
@@ -94,7 +93,9 @@ def search_results(search):
         flash('No results found!')
         return redirect('/produce')
     else:
-        # display results
+        #=====================
+        # return the base page
+        #=====================
         return render_template('produce.html', items=results, form=form)
 
 
@@ -113,6 +114,9 @@ def user_page():
         user_produce = crud.get_user_veggies(username)
 
     else:
+        #=====================
+        # return the base page
+        #=====================
         return redirect('/login')
 
     return render_template("user.html", user_produce=user_produce, form=search)
@@ -148,9 +152,6 @@ def add_user_produce(produce_id):
             user_produce = crud.add_user_produce(
                 produce_id, user_id, new_quantity, condition)
             session['quantity'] = user_produce.quantity
-            # current_quantity = session['quantity']
-            # print('QUANTITY IS CURRENTLY:', current_quantity)
-            
             
         flash('Produce has been added to your garden!')
         return redirect('/user')
@@ -175,14 +176,14 @@ def add_exchange_produce(id):
     """Adds vegetable from user's produce to the exchange"""
 
     if request.method == 'POST':
-        user_id = session['current_user_id']
         userproduce_id = id
         if(crud.user_exchange_exists(userproduce_id)):
             flash('Produce has already been added!')
             return redirect('/user')
-
         else:
-            
+            #====================
+            # get the form values
+            #====================
             comment = request.form['comment']
             amount = int(request.form['amount'])
 
@@ -194,15 +195,16 @@ def add_exchange_produce(id):
             
             # update user produce to reflect exchange
             crud.update_user_produce_quantity(userproduce_id, new_produce_amount)
-            
-            print('QUANTITY IS CURRENTLY:', current_quantity)
-            print('UPDATED USER PRODUCE???', new_produce_amount)
 
             db.session.commit()
         flash('Added to the exchange!')
 
-    return redirect('/user')
-    return render_template('user.html', exchange_items=exchange_items, user_produce=user_produce)
+        return redirect('/user')
+    else:
+        #=====================
+        # return the base page
+        #=====================
+        return render_template('user.html', exchange_items=exchange_items, user_produce=user_produce)
 
 
 # DISPLAY EXCHANGE PAGE
@@ -210,118 +212,140 @@ def add_exchange_produce(id):
 def exchange():
     """Show exchange page"""
 
+    #====================
+    # get the form values
+    #====================
     radius_in_miles = request.args.get('distance')
+    zipcode         = request.args.get('zipcode')
 
+    # default the radius to 5 miles
     if (radius_in_miles == None):
         radius_in_miles = 5
     
+    if (zipcode == None):
+        zipcode = '94114'
+
     radius_in_miles = float(radius_in_miles)
     
     # we are passing in 'miles', need to convert to meters
     METERS_IN_MILE = 1609.34
     radius = radius_in_miles * METERS_IN_MILE
     
-    zipcode = request.args.get('zipcode')
-    if (zipcode == None):
-        zipcode = '94114'
-
-    # get user session-- check if logged in -- save zipcode
-
-    # call geocoder.geocode
+    #=============================================
+    # find the geolocation of the supplied zipcode
+    #=============================================
     gmaps = googlemaps.Client(key='AIzaSyDIYpD84hN93_pAL4oomppVemp3JYSvaRE')
 
     geocode_result = gmaps.geocode(zipcode)
     center_lat = geocode_result[0]['geometry']['location']['lat']
     center_lng = geocode_result[0]['geometry']['location']['lng']
-    exchange_items = crud.get_exchange_by_distance(center_lat, center_lng, radius)
-    
-    #exchange_items = ExchangeProduce.query.all()
 
+    #==============================================
+    # find all exchanges within the supplied radius
+    #==============================================
+    exchange_items = crud.get_exchange_by_distance(center_lat, center_lng, radius)
+
+    #===================================================
+    # Render the Exchange page with the exchanges marked
+    #===================================================
     return render_template('exchange.html', exchange_items=exchange_items, zipcode=zipcode, radius=radius  )
 
-###############################################################
 
 #--------------------------- LOGIN/REGISTER HANDLERS ------------------------------------------#
 
 # LOGIN
-@app.route('/login', methods=['GET', 'POST'])
+@app.route('/login')
 def login_page():
     """View login page"""
-
     return render_template('login.html')
 
 # REGISTER
-@app.route('/register', methods=['GET', 'POST'])
+@app.route('/register')
 def register_page():
     """View sign up form"""
-
     return render_template('register.html')
 
+# REGISTER HANDLER
+@app.route('/handle-register', methods=['POST'])
+def handle_register():
+    #====================
+    # get the form values
+    #====================
+    username    = request.form.get('username')
+    email       = request.form.get('email')
+    zipcode     = request.form.get('zipcode')
+    address     = request.form.get('address')
+    city        = request.form.get('city')
+    state       = request.form.get('state')
+    password1   = request.form.get('password1')
+    password2   = request.form.get('password2')
+
+    #==========================================
+    # check to make sure not already registered
+    #==========================================
+    user = User.query.filter_by(email=email).first()
+    if user:
+        flash('user already exists.', category='error')
+    elif len(email) < 4:
+        flash('email must be greater than 3 characters.', category='error')
+    elif password1 != password2:
+        flash('Passwords don\'t match.', category='error')
+    else:
+        #=================================
+        # data looks good, create the user
+        #=================================
+        user = crud.create_user(username, email, password1, address, city, state, zipcode, lat, lng)
+        session['current_user'] = username.title()
+        session['current_user_id'] = user.id
+
+        #===============================
+        # get the geolocation of address
+        #===============================
+
+        # call gmaps.geocode to get lat/lng
+        gmaps = googlemaps.Client(
+            key='AIzaSyDIYpD84hN93_pAL4oomppVemp3JYSvaRE')
+
+        # Geocoding an address
+        full_address = address + "," + city + "," + state + "," + zipcode
+        geocode_result = gmaps.geocode(full_address)
+        lat = geocode_result[0]["geometry"]["location"]["lat"]
+        lng = geocode_result[0]["geometry"]["location"]["lng"]
+
+        session['user_lat'] = lat
+        session['user_lng'] = lng
+
+        flash(f"Welcome to the Community, {username}")
+        return redirect(f'/user')
 
 # LOGIN HANDLER
 @app.route('/handle-login', methods=['POST'])
 def handle_login():
     """Log user into site"""
 
+    #====================
+    # get the form values
+    #====================
     username = request.form['username']
     password = request.form['password']
 
+    #=================
+    # look up the user
+    #=================
     user = crud.lookup_user(username)
     if not user:
         flash("No account with this username. Please sign up.")
         return redirect('/register')
 
+    # at this point we have a user
     if password == crud.get_password(username):
+        # NOTE: we should be using encrypted passwors
         session['current_user'] = username
         session['current_user_id'] = user.id
         return redirect("/user")
     else:
         flash("Wrong password. Please try again.")
         return redirect('/login')
-
-
-# REGISTER HANDLER
-@app.route('/handle-register', methods=['GET', 'POST'])
-def handle_register():
-    if request.method == 'POST':
-        username = request.form.get('username')
-        email = request.form.get('email')
-        zipcode = request.form.get('zipcode')
-        address = request.form.get('address')
-        city = request.form.get('city')
-        state = request.form.get('state')
-        password1 = request.form.get('password1')
-        password2 = request.form.get('password2')
-
-        user = User.query.filter_by(email=email).first()
-        if user:
-            flash('user already exists.', category='error')
-        elif len(email) < 4:
-            flash('email must be greater than 3 characters.', category='error')
-        elif password1 != password2:
-            flash('Passwords don\'t match.', category='error')
-        else:
-            # # construct full address
-            full_address = address + "," + city + "," + state + "," + zipcode
-
-            # call gmaps.geocode to get lat/lng
-            gmaps = googlemaps.Client(
-                key='AIzaSyDIYpD84hN93_pAL4oomppVemp3JYSvaRE')
-
-            # Geocoding an address
-            geocode_result = gmaps.geocode(full_address)
-            # print (geocode_result[0]["geometry"]["location"])
-            lat = geocode_result[0]["geometry"]["location"]["lat"]
-            lng = geocode_result[0]["geometry"]["location"]["lng"]
-
-            user = crud.create_user(username, email, password1, address, city, state, zipcode, lat, lng)
-            session['current_user'] = username.title()
-            session['current_user_id'] = user.id
-            session['user_lat'] = lat
-            session['user_lng'] = lng
-
-            flash(f"Welcome to the Community, {username}")
-            return redirect(f'/user')
 
 # LOGOUT PAGE
 @app.route('/logout')
@@ -334,11 +358,10 @@ def handle_logout():
     flash(f"You've successfully logged out.")
     return redirect('/login')
 
-#--------------------------- NEW ------------------------------------------#
-
+#--------------------------- SPOONACULAR API ------------------------------------------#
 API_KEY = '94016bc42734493084e87bba6984b963'
 
-###################   SPOONACULAR API    ###################################
+
 @app.route('/recipes', methods=['GET', 'POST'])
 def recipes():
     """Returns recipes based on ingredient"""
@@ -346,22 +369,21 @@ def recipes():
         return redirect('/login')
     
     if request.method == 'POST':
+        #===================================
+        # fetch the recipes from spoonacluar
+        #===================================
         content = requests.get(
             "https://api.spoonacular.com/recipes/findByIngredients?ingredients=" +
             (request.form['restaurant_name']) +
             "&apiKey=" + API_KEY)
         json_response = json.loads(content.text)
-        print(json_response)
         return render_template("recipes.html", response=json_response) if json_response != [] else render_template(
             "recipes.html", response="")
     else:
+        #=====================
+        # return the base page
+        #=====================
         return render_template("recipes.html")
-############################## SPOONACULAR API ###################################
-
-
-
-
-
 
 #-------------------------END--------------------------------#
 if __name__ == "__main__":
