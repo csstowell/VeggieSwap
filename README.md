@@ -2,7 +2,7 @@
 # Tech Stack:
 Frontend: JavaScript | jQuery | HTML5 | CSS | Bootstrap
 Backend: Python3 | Flask | SQLAlchemy | Jinja2
-APIs: Twilio | GoogleMaps | Geocoder
+APIs: Twilio | GoogleMaps | Geocoder | Spoonacular
 Database: PostgreSQL
 
 
