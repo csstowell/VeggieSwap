@@ -1,7 +1,8 @@
 import crud
 import googlemaps
 import math
-from flask import (Flask, render_template, request, flash, session, redirect, jsonify, url_for)
+from flask import (Flask, render_template, request, flash,
+                   session, redirect, jsonify, url_for)
 from models import Produce, User, UserProduce, ExchangeProduce, db, connect_to_db
 from forms import ProduceSearchForm
 from db_setup import init_db, db_session
@@ -15,7 +16,6 @@ app = Flask(__name__)
 app.secret_key = "SECRET"
 
 
-
 #################################################
 
 @app.route('/exchange/contact/<int:id>', methods=['POST'])
@@ -26,7 +26,7 @@ def sendGrid(id):
         content_fieldId = 'messageContent_'+str(id)
         message_content = request.form[content_fieldId]
         api_key = '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'
-        sg = sendgrid.SendGridAPIClient(api_key = api_key)
+        sg = sendgrid.SendGridAPIClient(api_key=api_key)
         from sendgrid.helpers.mail import Mail, Email, To, Content
 
         from_email = Email("adamjackson397@gmail.com")  # verified sender
@@ -42,7 +42,6 @@ def sendGrid(id):
         # Get a JSON-ready representation of the Mail object
         mail_json = mail.get()
 
-
         # Send an HTTP POST request to /mail/send
         response = sg.client.mail.send.post(request_body=mail_json)
         print(response.status_code)
@@ -53,6 +52,8 @@ def sendGrid(id):
 ####################################################################
 
 # HOMEPAGE
+
+
 @app.route('/', methods=['GET', 'POST'])
 def home_page():
     """Show home Page"""
@@ -67,7 +68,6 @@ def produce_page():
     if 'current_user' not in session:
         return redirect('/login')
 
-
     search = ProduceSearchForm(request.form)
     if request.method == 'POST':
         return search_results(search)
@@ -81,21 +81,22 @@ def produce_page():
 @app.route('/results')
 def search_results(search):
     """return list of search results"""
-    
+
     results = []
     form = ProduceSearchForm(request.form)
     search_string = form.data['search']
 
     if request.method == 'POST':
-        qry = db_session.query(Produce).filter(func.lower(Produce.name) == func.lower(search_string))
+        qry = db_session.query(Produce).filter(
+            func.lower(Produce.name) == func.lower(search_string))
         results = qry.all()
     if not results:
         flash('No results found!')
         return redirect('/produce')
     else:
-        #=====================
+        # =====================
         # return the base page
-        #=====================
+        # =====================
         return render_template('produce.html', items=results, form=form)
 
 
@@ -114,14 +115,16 @@ def user_page():
         user_produce = crud.get_user_veggies(username)
 
     else:
-        #=====================
+        # =====================
         # return the base page
-        #=====================
+        # =====================
         return redirect('/login')
 
     return render_template("user.html", user_produce=user_produce, form=search)
 
 # SHOW PRODUCE BY ID
+
+
 @app.route('/produce/<produce_id>', methods=['POST', 'GET'])
 def show_produce(produce_id):
     '''Return produce details & provide button to add produce.'''
@@ -147,12 +150,11 @@ def add_user_produce(produce_id):
             # do an update
             crud.update_user_produce_amount(user_id, produce_id, new_quantity)
 
-
         else:
             user_produce = crud.add_user_produce(
                 produce_id, user_id, new_quantity, condition)
             session['quantity'] = user_produce.quantity
-            
+
         flash('Produce has been added to your garden!')
         return redirect('/user')
     return render_template('user.html', user_produce=user_produce, new_quantity=new_quantity)
@@ -181,29 +183,31 @@ def add_exchange_produce(id):
             flash('Produce has already been added!')
             return redirect('/user')
         else:
-            #====================
+            # ====================
             # get the form values
-            #====================
+            # ====================
             comment = request.form['comment']
             amount = int(request.form['amount'])
 
             # create new user exchange produce & add to db
-            exchange_items = crud.add_exchange_produce(userproduce_id, amount, comment)
-            
+            exchange_items = crud.add_exchange_produce(
+                userproduce_id, amount, comment)
+
             current_quantity = session['quantity']
             new_produce_amount = (current_quantity - amount)
-            
+
             # update user produce to reflect exchange
-            crud.update_user_produce_quantity(userproduce_id, new_produce_amount)
+            crud.update_user_produce_quantity(
+                userproduce_id, new_produce_amount)
 
             db.session.commit()
         flash('Added to the exchange!')
 
         return redirect('/user')
     else:
-        #=====================
+        # =====================
         # return the base page
-        #=====================
+        # =====================
         return render_template('user.html', exchange_items=exchange_items, user_produce=user_produce)
 
 
@@ -212,43 +216,44 @@ def add_exchange_produce(id):
 def exchange():
     """Show exchange page"""
 
-    #====================
+    # ====================
     # get the form values
-    #====================
+    # ====================
     radius_in_miles = request.args.get('distance')
-    zipcode         = request.args.get('zipcode')
+    zipcode = request.args.get('zipcode')
 
     # default the radius to 5 miles
     if (radius_in_miles == None):
         radius_in_miles = 5
-    
+
     if (zipcode == None):
         zipcode = '94114'
 
     radius_in_miles = float(radius_in_miles)
-    
+
     # we are passing in 'miles', need to convert to meters
     METERS_IN_MILE = 1609.34
     radius = radius_in_miles * METERS_IN_MILE
-    
-    #=============================================
+
+    # =============================================
     # find the geolocation of the supplied zipcode
-    #=============================================
+    # =============================================
     gmaps = googlemaps.Client(key='AIzaSyDIYpD84hN93_pAL4oomppVemp3JYSvaRE')
 
     geocode_result = gmaps.geocode(zipcode)
     center_lat = geocode_result[0]['geometry']['location']['lat']
     center_lng = geocode_result[0]['geometry']['location']['lng']
 
-    #==============================================
+    # ==============================================
     # find all exchanges within the supplied radius
-    #==============================================
-    exchange_items = crud.get_exchange_by_distance(center_lat, center_lng, radius)
+    # ==============================================
+    exchange_items = crud.get_exchange_by_distance(
+        center_lat, center_lng, radius)
 
-    #===================================================
+    # ===================================================
     # Render the Exchange page with the exchanges marked
-    #===================================================
-    return render_template('exchange.html', exchange_items=exchange_items, zipcode=zipcode, radius=radius  )
+    # ===================================================
+    return render_template('exchange.html', exchange_items=exchange_items, zipcode=zipcode, radius=radius)
 
 
 #--------------------------- LOGIN/REGISTER HANDLERS ------------------------------------------#
@@ -260,29 +265,33 @@ def login_page():
     return render_template('login.html')
 
 # REGISTER
+
+
 @app.route('/register')
 def register_page():
     """View sign up form"""
     return render_template('register.html')
 
 # REGISTER HANDLER
+
+
 @app.route('/handle-register', methods=['POST'])
 def handle_register():
-    #====================
+    # ====================
     # get the form values
-    #====================
-    username    = request.form.get('username')
-    email       = request.form.get('email')
-    zipcode     = request.form.get('zipcode')
-    address     = request.form.get('address')
-    city        = request.form.get('city')
-    state       = request.form.get('state')
-    password1   = request.form.get('password1')
-    password2   = request.form.get('password2')
+    # ====================
+    username = request.form.get('username')
+    email = request.form.get('email')
+    zipcode = request.form.get('zipcode')
+    address = request.form.get('address')
+    city = request.form.get('city')
+    state = request.form.get('state')
+    password1 = request.form.get('password1')
+    password2 = request.form.get('password2')
 
-    #==========================================
+    # ==========================================
     # check to make sure not already registered
-    #==========================================
+    # ==========================================
     user = User.query.filter_by(email=email).first()
     if user:
         flash('user already exists.', category='error')
@@ -291,16 +300,17 @@ def handle_register():
     elif password1 != password2:
         flash('Passwords don\'t match.', category='error')
     else:
-        #=================================
+        # =================================
         # data looks good, create the user
-        #=================================
-        user = crud.create_user(username, email, password1, address, city, state, zipcode, lat, lng)
+        # =================================
+        user = crud.create_user(
+            username, email, password1, address, city, state, zipcode, lat, lng)
         session['current_user'] = username.title()
         session['current_user_id'] = user.id
 
-        #===============================
+        # ===============================
         # get the geolocation of address
-        #===============================
+        # ===============================
 
         # call gmaps.geocode to get lat/lng
         gmaps = googlemaps.Client(
@@ -319,19 +329,21 @@ def handle_register():
         return redirect(f'/user')
 
 # LOGIN HANDLER
+
+
 @app.route('/handle-login', methods=['POST'])
 def handle_login():
     """Log user into site"""
 
-    #====================
+    # ====================
     # get the form values
-    #====================
+    # ====================
     username = request.form['username']
     password = request.form['password']
 
-    #=================
+    # =================
     # look up the user
-    #=================
+    # =================
     user = crud.lookup_user(username)
     if not user:
         flash("No account with this username. Please sign up.")
@@ -348,6 +360,8 @@ def handle_login():
         return redirect('/login')
 
 # LOGOUT PAGE
+
+
 @app.route('/logout')
 def handle_logout():
     """Logs player out"""
@@ -358,6 +372,7 @@ def handle_logout():
     flash(f"You've successfully logged out.")
     return redirect('/login')
 
+
 #--------------------------- SPOONACULAR API ------------------------------------------#
 API_KEY = '94016bc42734493084e87bba6984b963'
 
@@ -367,11 +382,11 @@ def recipes():
     """Returns recipes based on ingredient"""
     if 'current_user' not in session:
         return redirect('/login')
-    
+
     if request.method == 'POST':
-        #===================================
+        # ===================================
         # fetch the recipes from spoonacluar
-        #===================================
+        # ===================================
         content = requests.get(
             "https://api.spoonacular.com/recipes/findByIngredients?ingredients=" +
             (request.form['restaurant_name']) +
@@ -380,10 +395,11 @@ def recipes():
         return render_template("recipes.html", response=json_response) if json_response != [] else render_template(
             "recipes.html", response="")
     else:
-        #=====================
+        # =====================
         # return the base page
-        #=====================
+        # =====================
         return render_template("recipes.html")
+
 
 #-------------------------END--------------------------------#
 if __name__ == "__main__":
