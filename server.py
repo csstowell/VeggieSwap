@@ -51,7 +51,9 @@ def sendGrid(id):
 
 ####################################################################
 
+# =========
 # HOMEPAGE
+# =========
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -60,8 +62,11 @@ def home_page():
 
     return render_template('home.html')
 
-
+# =============
 # PRODUCE PAGE
+# =============
+
+
 @app.route('/produce', methods=['GET', 'POST'])
 def produce_page():
     """View all produce listings from database"""
@@ -76,8 +81,11 @@ def produce_page():
 
     return render_template('produce.html', items=items, form=search)
 
-
+# =======================
 # SEARCH PRODUCE RESULTS
+# =======================
+
+
 @app.route('/results')
 def search_results(search):
     """return list of search results"""
@@ -99,8 +107,11 @@ def search_results(search):
         # =====================
         return render_template('produce.html', items=results, form=form)
 
-
+# ==========
 # USER-PAGE
+# ==========
+
+
 @app.route('/user', methods=['GET', 'POST'])
 def user_page():
     """View all user produce"""
@@ -122,7 +133,9 @@ def user_page():
 
     return render_template("user.html", user_produce=user_produce, form=search)
 
+# ===================
 # SHOW PRODUCE BY ID
+# ===================
 
 
 @app.route('/produce/<produce_id>', methods=['POST', 'GET'])
@@ -132,8 +145,11 @@ def show_produce(produce_id):
 
     return render_template("display_details.html", display_produce=produce)
 
-
+# =================
 # ADD USER PRODUCE
+# =================
+
+
 @app.route('/add_user_produce/<int:produce_id>', methods=['POST', 'GET'])
 def add_user_produce(produce_id):
     """add user produce to user_page"""
@@ -159,8 +175,11 @@ def add_user_produce(produce_id):
         return redirect('/user')
     return render_template('user.html', user_produce=user_produce, new_quantity=new_quantity)
 
-
+# ===================
 # DELETE USERPRODUCE
+# ===================
+
+
 @app.route("/user/delete/<int:id>", methods=['GET', 'POST'])
 def delete_user_produce(id):
     if request.method == 'POST':
@@ -171,8 +190,11 @@ def delete_user_produce(id):
 
     return redirect('/user')
 
-
+# ==============================
 # ADD EXCHANGE PRODUCE & UPDATE
+# ==============================
+
+
 @app.route('/user/exchange/<int:id>', methods=['GET', 'POST'])
 def add_exchange_produce(id):
     """Adds vegetable from user's produce to the exchange"""
@@ -210,8 +232,11 @@ def add_exchange_produce(id):
         # =====================
         return render_template('user.html', exchange_items=exchange_items, user_produce=user_produce)
 
-
+# ======================
 # DISPLAY EXCHANGE PAGE
+# ======================
+
+
 @app.route('/exchange')
 def exchange():
     """Show exchange page"""
@@ -258,23 +283,69 @@ def exchange():
 
 #--------------------------- LOGIN/REGISTER HANDLERS ------------------------------------------#
 
+# ======
 # LOGIN
+# ======
 @app.route('/login')
 def login_page():
     """View login page"""
     return render_template('login.html')
 
+# ==============
+# LOGIN HANDLER
+# ==============
+@app.route('/handle-login', methods=['POST'])
+def handle_login():
+    """Log user into site"""
+
+    # ====================
+    # get the form values
+    # ====================
+    username = request.form['username']
+    password = request.form['password']
+
+    # =================
+    # look up the user
+    # =================
+    user = crud.lookup_user(username)
+    if not user:
+        flash("No account with this username. Please sign up.")
+        return redirect('/register')
+
+    # at this point we have a user
+    if password == crud.get_password(username):
+        # NOTE: we should be using encrypted passwors
+        session['current_user'] = username
+        session['current_user_id'] = user.id
+        return redirect("/user")
+    else:
+        flash("Wrong password. Please try again.")
+        return redirect('/login')
+
+# ============
+# LOGOUT PAGE
+# ============
+@app.route('/logout')
+def handle_logout():
+    """Logs player out"""
+
+    del session['current_user']
+    del session['current_user_id']
+
+    flash(f"You've successfully logged out.")
+    return redirect('/login')
+
+# =========
 # REGISTER
-
-
+# =========
 @app.route('/register')
 def register_page():
     """View sign up form"""
     return render_template('register.html')
 
+# =================
 # REGISTER HANDLER
-
-
+# =================
 @app.route('/handle-register', methods=['POST'])
 def handle_register():
     # ====================
@@ -328,55 +399,13 @@ def handle_register():
         flash(f"Welcome to the Community, {username}")
         return redirect(f'/user')
 
-# LOGIN HANDLER
-
-
-@app.route('/handle-login', methods=['POST'])
-def handle_login():
-    """Log user into site"""
-
-    # ====================
-    # get the form values
-    # ====================
-    username = request.form['username']
-    password = request.form['password']
-
-    # =================
-    # look up the user
-    # =================
-    user = crud.lookup_user(username)
-    if not user:
-        flash("No account with this username. Please sign up.")
-        return redirect('/register')
-
-    # at this point we have a user
-    if password == crud.get_password(username):
-        # NOTE: we should be using encrypted passwors
-        session['current_user'] = username
-        session['current_user_id'] = user.id
-        return redirect("/user")
-    else:
-        flash("Wrong password. Please try again.")
-        return redirect('/login')
-
-# LOGOUT PAGE
-
-
-@app.route('/logout')
-def handle_logout():
-    """Logs player out"""
-
-    del session['current_user']
-    del session['current_user_id']
-
-    flash(f"You've successfully logged out.")
-    return redirect('/login')
-
 
 #--------------------------- SPOONACULAR API ------------------------------------------#
 API_KEY = '94016bc42734493084e87bba6984b963'
 
-
+#========
+# RECIPES
+#========
 @app.route('/recipes', methods=['GET', 'POST'])
 def recipes():
     """Returns recipes based on ingredient"""

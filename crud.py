@@ -4,8 +4,9 @@ import math
 from sqlalchemy import func
 from models import (db, User, Produce, UserProduce,
                     ExchangeProduce, connect_to_db)
-
-# CREATE USER
+#==============
+# Create a user
+#==============
 def create_user(username, email, password, address, city, state, zipcode, lat, lng, phone=None):
     """Create and return a new user"""
 
@@ -20,6 +21,9 @@ def create_user(username, email, password, address, city, state, zipcode, lat, l
 
     return user
 
+#=============================
+# Look the user up by their id
+#=============================
 def lookup_user_by_id(id):
     """Returns the user matching the userId"""
 
@@ -27,7 +31,9 @@ def lookup_user_by_id(id):
 
     return user
 
-# CHECK USERNAME EXISTS
+#=============================
+# Look up the user by username
+#=============================
 def lookup_user(username):
     """Returns True if username exists in User table"""
 
@@ -35,7 +41,9 @@ def lookup_user(username):
 
     return user
 
-# GET MATCHING PASSWORD
+#================================
+# Get the password for a username
+#================================
 def get_password(username):
     """Takes in username and returns matching user's password"""
 
@@ -44,7 +52,9 @@ def get_password(username):
 
     return password[0]
 
-# CHECK EMAIL
+#===========================================
+# Returns True if email exists in User table
+#===========================================
 def lookup_email(email):
     """Returns True if email exists in User table"""
 
@@ -52,7 +62,9 @@ def lookup_email(email):
 
     return email
 
-# GET USERNAME BY EMAIL
+#=====================================================
+# Lookup the email address of a user by their username
+#=====================================================
 def get_email_by_username(username):
     """Takes in username and returns email of matching user"""
 
@@ -60,14 +72,18 @@ def get_email_by_username(username):
 
     return user.email
 
-# MARKET PRODUCE BY ID
+#=========================
+# Return produce by its ID
+#=========================
 def get_produce_by_id(id):
     """Return a vegetable, given produce.id."""
     produce = Produce.query.filter_by(id=id).one()
 
     return produce
 
-# ADD USER PRODUCE (/add_user_produce)
+#=====================================================
+# Create & return an instance of produce owned by user
+#=====================================================
 def add_user_produce(produce_id, user_id, quantity, condition):
     """Create & return an instance of produce owned by user"""
     user_produce = UserProduce(
@@ -77,18 +93,20 @@ def add_user_produce(produce_id, user_id, quantity, condition):
     db.session.commit()
     return user_produce
 
-
-# GET USER VEGGIES
+#================================================
+# Get the produce for a user using their username
+#================================================
 def get_user_veggies(username):
     """Takes in a username and returns user's user_produce"""
     user_produce = db.session.query(UserProduce).select_from(UserProduce).join(
         User).join(Produce).filter(func.lower(User.username) == func.lower(username)).all()
 
-        
-
     return user_produce
 
-# GET USER VEGGIES BY ID
+
+#==================================================================
+# Get the produce for a user using both their id and the produce id
+#==================================================================
 def get_user_veggies_by_id(user_id, produce_id):
     """Takes in a username and returns user's user_produce"""
     user_produce = db.session.query(UserProduce).select_from(UserProduce).join(User).join(
@@ -96,13 +114,16 @@ def get_user_veggies_by_id(user_id, produce_id):
 
     return user_produce
 
-# CHECK IF USER PRODUCE EXISTS
+#==============================
+# Check if the user has produce
+#==============================
 def user_produce_exists(user_id, produce_id):
     """Returns true if you have an entry"""
     return db.session.query(UserProduce).select_from(UserProduce).join(User).join(Produce).filter(User.id == user_id).filter(UserProduce.produce_id == produce_id).first() is not None
 
-
-
+#=======================================
+# update the produce quantity for a user
+#=======================================
 def update_user_produce(id, amount, user_id):
     userProduce = db.session.query(UserProduce).filter(
         UserProduce.user_id == user_id).filter(UserProduce.produce_id == id).first()
@@ -113,7 +134,9 @@ def update_user_produce(id, amount, user_id):
     db.session.commit()
     return 
 
-
+#====================================
+# Update the produce qantity for user
+#====================================
 def update_user_produce_quantity(userproduce_id, new_produce_amount):
     """Takes user produce id and updates the quantity"""
     
@@ -128,8 +151,9 @@ def update_user_produce_quantity(userproduce_id, new_produce_amount):
     db.session.commit()
     return 
 
-
-# UPDATE USER PRODUCE (QUANTITY)
+#===============================
+# Update user produce (quantity)
+#===============================
 def update_user_produce_amount(user_id, produce_id, new_quantity):
     """Takes ID of existing user_produce"""
     
@@ -146,7 +170,9 @@ def update_user_produce_amount(user_id, produce_id, new_quantity):
 
 # ---------------------------------------------------------
 
-# CHECK USER_EXCHANGE EXISTS
+#======================================
+# Check if user exchange exists already
+#======================================
 def user_exchange_exists(userproduce_id):
     """Returns true if user has a user_exchange entry"""
 
@@ -156,7 +182,9 @@ def user_exchange_exists(userproduce_id):
     return ExchangeProduce.query.filter_by(userproduce_id=userproduce_id).first() is not None
 
 
-# CREATE EXCHANGE PRODUCE
+#========================
+# Create exchange produce
+#========================
 def add_exchange_produce(userproduce_id, amount, comment, userconsumer_id=None, state=None, date=None):
     """Creates a new user exchange produce & adds to the db"""
     exchange_items = ExchangeProduce(
@@ -174,7 +202,9 @@ def add_exchange_produce(userproduce_id, amount, comment, userconsumer_id=None, 
 
 
 
-
+#=================================
+# Get exchange produce by distance
+#=================================
 def get_exchange_by_distance(center_lat, center_lng, radius):
     """Returns exchanges within the specified radius (in meters) """
     R = 6371e3; # earth's mean radius in metres
@@ -212,7 +242,9 @@ def get_exchange_by_distance(center_lat, center_lng, radius):
 
 #------------------------- NEW  ------------------------------------------#
 
-
+#================================
+# Get exchange produce by zipcode
+#================================
 def get_exchanges_by_zipcode(zipcode):
     """Return a list of exchanges by zipcode"""
     
@@ -234,6 +266,9 @@ def get_exchanges_by_zipcode(zipcode):
 
 
 
+#=================================
+# Get user's produce by produce id
+#=================================
 
 def get_user_produce_by_produce_id(userproduce_id):
     """Takes in string and finds match with Produce in db, if any"""
@@ -246,7 +281,9 @@ def get_user_produce_by_produce_id(userproduce_id):
     else:
         return None
 
-
+#===============================
+# Get user's produce by username
+#===============================
 def get_produce_by_name(name):
     """Takes in string and finds match with Produce in db, if any"""
 

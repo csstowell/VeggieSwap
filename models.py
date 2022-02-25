@@ -6,7 +6,9 @@ db = SQLAlchemy()
 app = Flask(__name__)
 app.secret_key = "SECRET!"
 
-
+#========================
+# Connect to the database
+#========================
 def connect_to_db(app, produce_swap):
     """Connect to database."""
 
@@ -19,7 +21,10 @@ def connect_to_db(app, produce_swap):
 
 
 #-------------------- MODEL DEFINITIONS ---------------------------------------------#
-# USER
+
+#===============
+# The USER class
+#===============
 class User(db.Model):
     """A user."""
 
@@ -42,8 +47,9 @@ class User(db.Model):
     def __repr__(self):
         return f"<User id={self.id } email={self.email} username={self.username} lat={self.lat} lng={self.lng}>"
 
-
-# PRODUCE
+#==============
+# Produce class
+#==============
 class Produce(db.Model):
     """A vegetable entity"""
 
@@ -61,13 +67,11 @@ class Produce(db.Model):
     def __repr__(self):
         """Show human-readable info about vegetable"""
 
-        return f"<Produce id={self.id} name={self.name} variety={self.variety}>"
+        return f"<Produce id={self.id} name={self.name} variety={self.variety}>
 
-
-
-#------------------------ USER PRODUCE -------------------------------------------#
-
-# USER PRODUCE
+#===================
+# User Produce class
+#===================
 class UserProduce(db.Model):
     """A physical instance of a vegetable owned by user"""
 
@@ -106,7 +110,9 @@ class UserProduce(db.Model):
 
 
 
-# EXCHANGE PRODUCE
+#=======================
+# Exchange Produce Class
+#=======================
 class ExchangeProduce(db.Model):
     """Subset of user_produce that user wants to exchange"""
     
